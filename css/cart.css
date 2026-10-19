@@ -1,0 +1,124 @@
+/* تنسيقات سلة المشتريات */
+.cart-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.cart-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--card-bg);
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.item-info h4 {
+    font-family: var(--font-heading);
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.item-info p {
+    color: var(--primary-red);
+    font-weight: bold;
+}
+
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.item-actions button {
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.item-actions button:hover {
+    background-color: var(--primary-red);
+}
+
+.remove-btn {
+    background-color: transparent !important;
+    color: var(--primary-red) !important;
+}
+
+.cart-summary {
+    background-color: var(--card-bg);
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--primary-red);
+    height: fit-content;
+}
+
+.summary-line {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 20px 0;
+    border-bottom: 1px solid #333;
+    padding-bottom: 10px;
+}
+
+.cod-note {
+    color: var(--text-gray);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.checkout-btn {
+    width: 100%;
+    text-align: center;
+}
+
+/* تنسيقات صفحة الدفع (Checkout) */
+.checkout-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: var(--card-bg);
+    padding: 40px;
+    border-radius: 8px;
+    border: 1px solid #333;
+}
+
+.checkout-form input, 
+.checkout-form textarea {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    background-color: #0d0d0d;
+    border: 1px solid #444;
+    color: white;
+    font-family: var(--font-body);
+    border-radius: 5px;
+}
+
+.checkout-form input:focus, 
+.checkout-form textarea:focus {
+    outline: none;
+    border-color: var(--primary-red);
+}
+
+.checkout-form textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+/* التجاوب مع الموبايل */
+@media (max-width: 768px) {
+    .cart-container {
+        grid-template-columns: 1fr;
+    }
+}

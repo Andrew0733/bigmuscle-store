@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Checkout | Big Muscle</title>
+    <!-- حط لينكات الـ CSS هنا زي صفحة cart.html -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cart.css">
+</head>
+<body>
+    <!-- (Navbar هنا) -->
+
+    <section class="section checkout-section">
+        <h2 class="section-title" data-ar="إتمام الطلب" data-en="CHECKOUT">CHECKOUT</h2>
+        
+        <div class="checkout-container">
+            <form id="checkout-form" class="checkout-form">
+                <h3 data-ar="بيانات التوصيل" data-en="Delivery Details">Delivery Details</h3>
+                
+                <input type="text" id="name" placeholder="Full Name | الاسم بالكامل" required>
+                <input type="tel" id="phone" placeholder="Phone Number | رقم الهاتف" required>
+                <input type="text" id="address" placeholder="Detailed Address | العنوان بالتفصيل" required>
+                <textarea id="notes" placeholder="Notes (Optional) | ملاحظات (اختياري)"></textarea>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;" data-ar="تأكيد الطلب (الدفع عند الاستلام)" data-en="Confirm Order (Cash on Delivery)">Confirm Order (Cash on Delivery)</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- (Footer هنا) -->
+
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+    document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if(cart.length === 0) {
+            alert("سلتك فارغة! / Your cart is empty!");
+            return;
+        }
+
+        // تجميع بيانات العميل والسلة
+        const orderData = {
+            customerName: document.getElementById('name').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value,
+            notes: document.getElementById('notes').value,
+            items: cart,
+            totalAmount: cart.reduce((total, item) => total + (item.price * item.quantity), 0)
+        };
+
+        try {
+            // إرسال الطلب لقاعدة البيانات
+            const response = await fetch('http://localhost:5000/api/orders', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(orderData)
+            });
+
+            if(response.ok) {
+                alert("تم تأكيد الطلب بنجاح! سنتواصل معك قريباً. / Order placed successfully!");
+                localStorage.removeItem('bigMuscleCart'); // تفريغ السلة
+                window.location.href = 'index.html'; // الرجوع للرئيسية
+            }
+        } catch (error) {
+            alert("حدث خطأ في الإتصال بالسيرفر!");
+            console.error(error);
+        }
+    });
+</script>
+</body>
+</html>

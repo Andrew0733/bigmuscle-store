@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Big Muscle | Premium Sports Supplements</title>
+
+    <!-- Google Fonts (خطوط قوية ورياضية) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Montserrat:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <!-- FontAwesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <!-- CSS Files (مقسمة زي ما طلبت) -->
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/navbar.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <link rel="stylesheet" href="css/footer.css" />
+    <!-- Favicon (اللوجو في التاب) -->
+    <link rel="icon" href="images/logo.png" type="image/png" />
+  </head>
+  <body>
+    <!-- Top Bar 
+    <div class="top-bar">
+      <p
+        data-ar="خصم 20% على جميع منتجات البروتين هذا الأسبوع!"
+        data-en="20% OFF ALL PROTEIN PRODUCTS THIS WEEK!"
+      >
+        20% OFF ALL PROTEIN PRODUCTS THIS WEEK!
+      </p>
+    </div> -->
+
+    <!-- Navbar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="index.html" class="logo">
+          <img src="images/logo.png" alt="Big Muscle Logo" />
+        </a>
+
+        <div class="menu-toggle" id="mobile-menu">
+          <i class="fas fa-bars"></i>
+        </div>
+
+        <ul class="nav-links">
+          <li>
+            <a href="index.html" data-ar="الرئيسية" data-en="Home">Home</a>
+          </li>
+
+          <!-- Shop Dropdown Menu -->
+          <li>
+            <a href="products.html" data-ar="كل المنتجات" data-en="All Products"
+              >All Products</a
+            >
+          </li>
+
+          <li class="dropdown">
+            <a
+              href="#"
+              data-ar="تسوق <i class='fas fa-caret-down'></i>"
+              data-en="Shop <i class='fas fa-caret-down'></i>"
+            >
+              Shop <i class="fas fa-caret-down"></i>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- هتتملأ أوتوماتيك من JavaScript -->
+            </ul>
+          </li>
+
+          <!-- About Us اللي بتنزل للفوتر -->
+          <li>
+            <a
+              href="javascript:void(0)"
+              id="aboutUsBtn"
+              data-ar="من نحن"
+              data-en="About Us"
+              >About Us</a
+            >
+          </li>
+        </ul>
+
+        <div class="nav-actions">
+
+            <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search..." data-ar="ابحث..." data-en="Search...">
+        <button id="searchBtn"><i class="fas fa-search"></i></button>
+    </div>
+
+    <!-- زرار اللغة 
+    <button id="lang-toggle" class="lang-btn">عربي</button>-->
+    
+    <!-- السلة 
+    <a href="cart.html" class="cart-icon">
+        <i class="fas fa-shopping-cart"></i>
+        <span class="cart-count">0</span>
+    </a>-->
+          <!-- أيقونات السوشيال ميديا في الناف بار -->
+          <div class="nav-socials">
+            <a
+              href="https://www.instagram.com/bigmuscle.eg?stkn=MWN1bXh5eDk0MGZ1eQ%3D%3D&utm_source=qr"
+              target="_blank"
+              title="Instagram"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a
+              href="https://www.tiktok.com/@bigmuscle215?_r=1&_t=ZS-9A8xJO6r1Sz"
+              target="_blank"
+              title="TikTok"
+              ><i class="fab fa-tiktok"></i
+            ></a>
+          </div>
+
+          <button id="lang-toggle" class="lang-btn">عربي</button>
+          <a href="cart.html" target="_blank" class="cart-icon">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-count">0</span>
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+      <div class="hero-content">
+        <h1
+          data-ar="ابنِ عضلاتك. سيطر على تمرينك."
+          data-en="BUILD MUSCLE. DOMINATE YOUR WORKOUT."
+        >
+          BUILD MUSCLE. DOMINATE YOUR WORKOUT.
+        </h1>
+        <p
+          data-ar="أفضل المكملات الغذائية لدعم رحلتك الرياضية."
+          data-en="Premium sports supplements to fuel your fitness journey."
+        >
+          Premium sports supplements to fuel your fitness journey.
+        </p>
+        <a
+          href="#products"
+          class="btn btn-primary"
+          data-ar="تسوق الآن"
+          data-en="SHOP NOW"
+          >SHOP NOW</a
+        >
+      </div>
+    </header>
+
+    <!-- Dynamic Offers Section -->
+    <section class="section offers-section" style="display: none">
+      <h2
+        class="section-title"
+        data-ar="العروض والتخفيضات"
+        data-en="SPECIAL OFFERS"
+      >
+        SPECIAL OFFERS
+      </h2>
+      <div class="offers-grid" id="offers-container">
+        <!-- العروض تتولد ديناميكياً هنا -->
+      </div>
+    </section>
+
+    <!-- Featured Products Section -->
+    <section id="products" class="section">
+      <h2
+        class="section-title"
+        data-ar="المنتجات المميزة"
+        data-en="FEATURED PRODUCTS"
+      >
+        FEATURED PRODUCTS
+      </h2>
+
+      <div class="products-grid">
+        <!-- Product Card 1 -->
+        <div class="products-grid" id="products-grid">
+          <!-- المنتجات الديناميكية من قاعدة البيانات هتظهر هنا -->
+        </div>
+
+        <!-- Product Card 2 
+            <div class="product-card">
+                <div class="product-image">
+                    <i class="fas fa-dumbbell fa-4x" style="color:#555;"></i>
+                </div>
+                <h3 class="product-name">Creatine Monohydrate</h3>
+                <p class="product-desc" data-ar="طاقة وقوة تحمل قصوى" data-en="Maximum strength and endurance">Maximum strength and endurance</p>
+                <div class="product-price">
+                    <span class="price-val">950</span> 
+                    <span class="currency" data-ar="ج.م" data-en="EGP">EGP</span>
+                </div>
+                <button class="btn btn-outline" data-ar="أضف للسلة" data-en="Add to Cart" onclick="addToCart('p2', 'Creatine Monohydrate', 950, 'images/creatine.jpg')">Add to Cart</button>
+            </div>-->
+      </div>
+    </section>
+
+    <!-- Floating WhatsApp Button -->
+    <!-- Floating WhatsApp Button -->
+    <!-- غير رقم التليفون اللي تحت ده برقم الواتساب بتاعك بالـ Country Code بدون + أو أصفار (مثال لمصر: 201012345678) -->
+    <a
+      href="https://wa.me/201272069390?text=welcome%20Big%20Muscle،%20نقدر%20نساعدك ازاي"
+      class="whatsapp-float"
+      target="_blank"
+      title="Chat with us"
+    >
+      <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-container">
+        <div class="footer-col">
+          <img src="images/logo.png" alt="Big Muscle" class="footer-logo" />
+          <p
+            data-ar="وجهتك الأولى للمكملات الغذائية."
+            data-en="Your ultimate destination for sports supplements."
+          >
+            Your ultimate destination for sports supplements.
+          </p>
+        </div>
+        <div class="footer-col">
+          <h4 data-ar="تواصل معنا" data-en="Contact Us">Contact Us</h4>
+          <!-- ضيف أرقامك هنا مكان الـ # -->
+          <p><i class="fas fa-phone"></i> <a href="tel:#">01272069390</a></p>
+          <p><i class="fas fa-phone"></i> <a href="tel:#">01040129356</a></p>
+          <!--<p><i class="fas fa-envelope"></i> <a href="mailto:#"></a></p> -->
+        </div>
+        <div class="footer-col">
+          <h4 data-ar="تابعنا" data-en="Follow Us">Follow Us</h4>
+          <div class="social-links">
+            <!-- ضيف لينكات السوشيال ميديا مكان الـ # -->
+            <a
+              href="https://www.instagram.com/bigmuscle.eg?stkn=MWN1bXh5eDk0MGZ1eQ%3D%3D&utm_source=qr"
+              ><i class="fab fa-instagram"></i
+            ></a>
+            <a
+              href="https://www.tiktok.com/@bigmuscle215?_r=1&_t=ZS-9A8xJO6r1Sz"
+              ><i class="fab fa-tiktok"></i
+            ></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Big Muscle. All Rights Reserved.</p>
+      </div>
+    </footer>
+
+    <!-- Offer Details Modal -->
+    <div class="offer-modal-overlay" id="offerModal">
+      <div class="offer-modal">
+        <button class="offer-modal-close" id="closeOfferModal">&times;</button>
+        <img src="" alt="Offer" class="offer-modal-img" id="modalOfferImg" />
+        <div class="offer-modal-body">
+          <span class="offer-modal-badge" id="modalOfferBadge">30% OFF</span>
+          <h2 id="modalOfferTitle">Offer Title</h2>
+          <p class="offer-modal-desc" id="modalOfferDesc">
+            Offer description goes here...
+          </p>
+          <div class="offer-modal-price">
+            <span id="modalOfferPrice">0</span>
+            <span id="modalOfferCurrency">EGP</span>
+          </div>
+          <div class="offer-modal-actions">
+            <button class="btn btn-primary" id="modalAddToCartBtn">
+              <i class="fas fa-cart-plus"></i>
+              <span data-ar="أضف للسلة" data-en="Add to Cart">Add to Cart</span>
+            </button>
+            <button
+              class="btn btn-outline"
+              id="modalCloseBtn"
+              data-ar="إغلاق"
+              data-en="Close"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- About Us Modal -->
+    <div class="about-modal-overlay" id="aboutModal">
+      <div class="about-modal">
+        <button class="about-modal-close" id="closeAboutModal">&times;</button>
+
+        <div class="about-modal-header">
+          <img src="images/logo.png" alt="Big Muscle" class="about-logo" />
+          <h2>BIG MUSCLE</h2>
+          <p
+            class="about-tagline"
+            data-ar="مكملاتك الرياضية.. بجودة عالمية"
+            data-en="Premium Sports Supplements"
+          >
+            Premium Sports Supplements
+          </p>
+        </div>
+
+        <div class="about-modal-body">
+          <p
+            class="about-desc"
+            data-ar="متجر Big Muscle متخصص في توفير أفضل المكملات الغذائية الرياضية بأعلى جودة وأسعار تنافسية، مع عروض مستمرة وتوصيل سريع."
+            data-en="Big Muscle is specialized in providing the best sports supplements with top quality, competitive prices, continuous offers, and fast delivery."
+          >
+            Big Muscle is specialized in providing the best sports supplements
+            with top quality, competitive prices, continuous offers, and fast
+            delivery.
+          </p>
+
+          <div class="about-info-grid">
+            <div class="about-info-item">
+              <i class="fas fa-phone"></i>
+              <div>
+                <strong data-ar="تواصل معنا" data-en="Call Us">Call Us</strong>
+                <!-- غيّر الأرقام هنا -->
+                <a href="tel:01000000000">01040129356</a>
+                <a href="tel:01100000000">01272069390</a>
+              </div>
+            </div>
+
+            <div class="about-info-item">
+              <i class="fas fa-envelope"></i>
+              <div>
+                <strong data-ar="البريد الإلكتروني" data-en="Email"
+                  >Email</strong
+                >
+                <a href="mailto:info@bigmuscle.com">info@bigmuscle.com</a>
+              </div>
+            </div>
+
+            <div class="about-info-item">
+              <i class="fas fa-clock"></i>
+              <div>
+                <strong data-ar="مواعيد العمل" data-en="Working Hours"
+                  >Working Hours</strong
+                >
+                <span
+                  data-ar="يومياً من 10 ص إلى 10 م"
+                  data-en="Daily 10 AM - 10 PM"
+                  >Daily 10 AM - 10 PM</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="about-socials">
+            <p data-ar="تابعنا على" data-en="Follow Us">Follow Us</p>
+            <div class="about-social-links">
+              <!-- غيّر اللينكات هنا -->
+              <a
+                href="https://www.instagram.com/bigmuscle.eg?stkn=MWN1bXh5eDk0MGZ1eQ%3D%3D&utm_source=qr"
+                target="_blank"
+                title="Instagram"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a
+                href="https://www.tiktok.com/@bigmuscle215?_r=1&_t=ZS-9A8xJO6r1Sz"
+                target="_blank"
+                title="TikTok"
+                ><i class="fab fa-tiktok"></i
+              ></a>
+              <a
+                href="https://wa.me/201272069390"
+                target="_blank"
+                title="WhatsApp"
+                ><i class="fab fa-whatsapp"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/cart.js"></script>
+    <script src="js/fetchProducts.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/categories.js"></script>
+    <script src="js/fetchOffers.js"></script>
+  </body>
+</html>

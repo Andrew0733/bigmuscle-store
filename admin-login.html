@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login | Big Muscle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body {
+            background: #0d0d0d;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+        }
+        .login-box {
+            background: #1a1a1a;
+            padding: 40px;
+            border-radius: 12px;
+            border: 2px solid var(--primary-red);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(230,0,0,0.15);
+        }
+        .login-logo { width: 120px; margin-bottom: 20px; }
+        .login-box h2 { color: #fff; margin-bottom: 30px; font-family: var(--font-heading); letter-spacing: 1px; }
+        .form-group { margin-bottom: 20px; text-align: right; }
+        .form-group label { display: block; color: #aaa; margin-bottom: 8px; font-size: 0.9rem; }
+        .form-group input { 
+            width: 100%; padding: 12px; border-radius: 6px; 
+            border: 1px solid #333; background: #050505; color: #fff; 
+            font-size: 1rem;
+        }
+        .form-group input:focus { outline: none; border-color: var(--primary-red); }
+        .btn-login { width: 100%; padding: 14px; font-size: 1.1rem; margin-top: 10px; }
+        .error-msg { color: #ff3333; margin-top: 15px; font-size: 0.9rem; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="login-box">
+        <img src="images/logo.png" alt="Big Muscle Logo" class="login-logo">
+        <h2>ADMIN LOGIN</h2>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label>اسم المستخدم (Username)</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label>كلمة المرور (Password)</label>
+                <input type="password" id="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-login">تسجيل الدخول</button>
+            <p class="error-msg" id="errorMsg">بيانات الدخول غير صحيحة!</p>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+
+            try {
+                const res = await fetch('http://localhost:5000/api/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await res.json();
+
+                if (data.success) {
+                    // لو صح، بنخزن المفتاح السري في المتصفح ونحوله للوحة التحكم
+                    localStorage.setItem('adminToken', data.token);
+                    window.location.href = 'admin.html';
+                } else {
+                    errorMsg.style.display = 'block';
+                    errorMsg.textContent = data.message;
+                }
+            } catch (err) {
+                errorMsg.style.display = 'block';
+                errorMsg.textContent = 'حدث خطأ في الاتصال بالسيرفر';
+            }
+        });
+    </script>
+</body>
+</html>

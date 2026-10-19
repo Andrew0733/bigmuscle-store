@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart | Big Muscle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/cart.css"> <!-- ملف تصميم السلة الجديد -->
+</head>
+<body>
+    <!-- (انسخ الـ Navbar بالكامل من index.html هنا) -->
+
+    <!-- Cart Section -->
+    <section class="section cart-section">
+        <h2 class="section-title" data-ar="سلة المشتريات" data-en="SHOPPING CART">SHOPPING CART</h2>
+        
+        <div class="cart-container">
+            <div id="cart-items" class="cart-items">
+                <!-- المنتجات هتظهر هنا بالـ JavaScript -->
+            </div>
+            
+            <div class="cart-summary">
+                <h3 data-ar="ملخص الطلب" data-en="Order Summary">Order Summary</h3>
+                <div class="summary-line">
+                    <span data-ar="المجموع:" data-en="Subtotal:">Subtotal:</span>
+                    <span id="cart-total">0 EGP</span>
+                </div>
+                <p class="cod-note" data-ar="الدفع عند الاستلام فقط" data-en="Cash on Delivery Only">Cash on Delivery Only</p>
+               <button onclick="goToCheckout()" class="btn btn-primary checkout-btn" data-ar="إتمام الطلب" data-en="Proceed to Checkout">Proceed to Checkout</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- (انسخ الـ Footer بالكامل من index.html هنا) -->
+
+    <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+    // كود لعرض المنتجات داخل صفحة السلة
+    function renderCart() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        const cartTotalElement = document.getElementById('cart-total');
+        let total = 0;
+
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = `<p style="font-size: 1.2rem; color: #888;" data-ar="السلة فارغة حالياً" data-en="Your cart is empty">Your cart is empty.</p>`;
+            cartTotalElement.textContent = `0 EGP`;
+            return;
+        }
+
+        cartItemsContainer.innerHTML = cart.map((item, index) => {
+            total += item.price * item.quantity;
+            return `
+            <div class="cart-item">
+                <div class="item-info">
+                    <h4>${item.name}</h4>
+                    <p>${item.price} EGP</p>
+                </div>
+                <div class="item-actions">
+                    <button onclick="changeQty(${index}, -1)">-</button>
+                    <span>${item.quantity}</span>
+                    <button onclick="changeQty(${index}, 1)">+</button>
+                    <button class="remove-btn" onclick="removeItem(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            `;
+        }).join('');
+        
+        cartTotalElement.textContent = `${total} EGP`;
+    }
+
+    function changeQty(index, change) {
+        if(cart[index].quantity + change > 0) {
+            cart[index].quantity += change;
+            saveCart();
+            renderCart();
+            updateCartIcon();
+        }
+    }
+
+    function removeItem(index) {
+        cart.splice(index, 1);
+        saveCart();
+        renderCart();
+        updateCartIcon();
+    }
+
+    // دالة التحقق قبل الذهاب لصفحة الدفع
+    function goToCheckout() {
+        if (cart.length === 0) {
+            const isAr = document.body.classList.contains('rtl');
+            alert(isAr ? 'السلة فارغة! يرجى إضافة منتجات أولاً قبل إتمام الطلب.' : 'Your cart is empty! Please add products first before checkout.');
+        } else {
+            window.location.href = 'checkout.html';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderCart);
+</script>
+</body>
+</html>
