@@ -1,7 +1,7 @@
 // تحميل التصنيفات في قائمة Shop
 async function loadCategoriesIntoNavbar() {
     try {
-        const res = await fetch('http://localhost:5000/api/categories');
+        const res = await fetch('/api/categories');
         const categories = await res.json();
         const isAr = document.body.classList.contains('rtl');
 

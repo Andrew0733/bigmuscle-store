@@ -3,7 +3,7 @@ async function loadProducts() {
     if (!productsGrid) return;
 
     try {
-        const response = await fetch('http://localhost:5000/api/products');
+        const response = await fetch('/api/products');
         let products = await response.json();
 
         // قراءة اللينك (هل العميل دايس على قسم؟ ولا عامل بحث؟)

@@ -5,7 +5,7 @@ async function loadOffers() {
     if (!offersContainer) return;
 
     try {
-        const res = await fetch('http://localhost:5000/api/offers');
+        const res = await fetch('/api/offers');
         const offers = await res.json();
         const isAr = document.body.classList.contains('rtl');
         const section = offersContainer.closest('.offers-section');

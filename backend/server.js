@@ -296,5 +296,6 @@ app.delete('/api/orders/:id', async (req, res) => {
 // 5. Start Server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
+    module.exports = app;
     console.log(`🚀 Server listening on port ${PORT}`);
 });
