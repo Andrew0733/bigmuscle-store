@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     createProductModalHTML();
 });
 
-let currentModalProduct = null;
+let allLoadedProducts = [];
 
 async function fetchProducts() {
     const productsGrid = document.getElementById('productsGrid');
@@ -12,6 +12,7 @@ async function fetchProducts() {
     try {
         const response = await fetch('/api/products');
         const products = await response.json();
+        allLoadedProducts = products; // حفظ المنتجات في الذاكرة لتجنب مشاكل النص والرموز
 
         const urlParams = new URLSearchParams(window.location.search);
         const searchQuery = urlParams.get('search')?.toLowerCase();
@@ -54,25 +55,33 @@ function renderProducts(products) {
     const currentLang = localStorage.getItem('lang') || 'en';
 
     productsGrid.innerHTML = products.map(product => {
-        const name = currentLang === 'ar' ? product.nameAr : product.name;
-        const mainImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || '');
+        const name = (currentLang === 'ar' ? product.nameAr : product.name) || product.name || product.nameAr;
+        const mainImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'https://via.placeholder.com/200');
+        const safeName = name.replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
         return `
-            <div class="product-card" onclick="openProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+            <div class="product-card" onclick="openProductModalById('${product._id}')">
                 <div class="product-image">
-                    <img src="${mainImg}" alt="${name}" loading="lazy" onerror="this.src='https://via.placeholder.com/200'">
-                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product._id}', '${name.replace(/'/g, "\\'")}', ${product.price}, '${mainImg}')">
+                    <img src="${mainImg}" alt="${safeName}" loading="lazy" onerror="this.src='https://via.placeholder.com/200'">
+                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product._id}', '${safeName}', ${product.price}, '${mainImg}')">
                         <i class="fa-solid fa-cart-shopping"></i> <span data-en="Add to Cart" data-ar="أضف للسلة">Add to Cart</span>
                     </button>
                 </div>
                 <div class="product-info">
-                    <span class="product-category">${product.category}</span>
+                    <span class="product-category">${product.category || ''}</span>
                     <h3 class="product-title">${name}</h3>
                     <div class="product-price">${product.price} EGP</div>
                 </div>
             </div>
         `;
     }).join('');
+}
+
+function openProductModalById(id) {
+    const product = allLoadedProducts.find(p => p._id === id);
+    if (product) {
+        openProductModal(product);
+    }
 }
 
 // Modal Generation & Logic
@@ -107,7 +116,6 @@ function createProductModalHTML() {
 }
 
 function openProductModal(product) {
-    currentModalProduct = product;
     const currentLang = localStorage.getItem('lang') || 'en';
 
     const modal = document.getElementById('productDetailModal');
@@ -119,7 +127,7 @@ function openProductModal(product) {
     const desc = document.getElementById('modalDesc');
     const addBtn = document.getElementById('modalAddBtn');
 
-    const name = currentLang === 'ar' ? product.nameAr : product.name;
+    const name = (currentLang === 'ar' ? product.nameAr : product.name) || product.name || product.nameAr;
     const descriptionText = currentLang === 'ar' ? (product.descriptionAr || product.description) : (product.description || product.descriptionAr);
     
     // Images Gallery
