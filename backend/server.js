@@ -14,10 +14,10 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 1. Database Connection (MongoDB Atlas or Local)
+// 1. Database Connection
 const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/bigmuscle';
 mongoose.connect(mongoURI)
-    .then(() => console.log('✅ Connected to MongoDB Atlas Successfully'))
+    .then(() => console.log('✅ Connected to MongoDB Successfully'))
     .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
 // 2. Cloudinary Config & Multer Setup
@@ -38,13 +38,21 @@ if (process.env.CLOUDINARY_CLOUD_NAME) {
     });
     upload = multer({ storage: storage });
 } else {
-    // Local fallback storage
     const storage = multer.diskStorage({
         destination: (req, file, cb) => cb(null, path.join(__dirname, 'uploads/')),
-        filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
+        filename: (req, file, cb) => cb(null, Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname))
     });
     upload = multer({ storage: storage });
 }
+
+// Helper for Multiple Image URLs
+const getImageUrls = (req) => {
+    let urls = [];
+    if (req.files && req.files.length > 0) {
+        urls = req.files.map(f => f.path || f.secure_url || `${req.protocol}://${req.get('host')}/uploads/${f.filename}`);
+    }
+    return urls;
+};
 
 // 3. Schemas & Models
 const categorySchema = new mongoose.Schema({
@@ -58,7 +66,10 @@ const productSchema = new mongoose.Schema({
     nameAr: { type: String, required: true },
     price: { type: Number, required: true },
     category: { type: String, required: true },
-    image: { type: String, required: true }
+    description: { type: String, default: '' },
+    descriptionAr: { type: String, default: '' },
+    images: [{ type: String }],
+    image: { type: String } // Backward compatibility
 });
 const Product = mongoose.model('Product', productSchema);
 
@@ -94,17 +105,8 @@ const orderSchema = new mongoose.Schema({
 });
 const Order = mongoose.model('Order', orderSchema);
 
-// Helper for Image URLs
-const getImageUrl = (req) => {
-    if (req.file && (req.file.path || req.file.secure_url)) {
-        return req.file.path || req.file.secure_url;
-    }
-    return req.file ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` : '';
-};
-
 // 4. API Endpoints
 
-// Root Route
 app.get('/', (req, res) => {
     res.send('Big Muscle API is running smoothly 🚀');
 });
@@ -150,7 +152,7 @@ app.delete('/api/categories/:id', async (req, res) => {
     }
 });
 
-// Products Routes
+// Products Routes (Supports Multiple Images & Description)
 app.get('/api/products', async (req, res) => {
     try {
         const products = await Product.find();
@@ -160,15 +162,19 @@ app.get('/api/products', async (req, res) => {
     }
 });
 
-app.post('/api/products', upload.single('image'), async (req, res) => {
+app.post('/api/products', upload.array('images', 5), async (req, res) => {
     try {
-        const imageUrl = getImageUrl(req);
+        const imageUrls = getImageUrls(req);
+        const mainImage = imageUrls.length > 0 ? imageUrls[0] : '';
         const newProduct = new Product({
             name: req.body.name,
             nameAr: req.body.nameAr,
             price: req.body.price,
             category: req.body.category,
-            image: imageUrl
+            description: req.body.description || '',
+            descriptionAr: req.body.descriptionAr || '',
+            images: imageUrls,
+            image: mainImage
         });
         await newProduct.save();
         res.status(201).json(newProduct);
@@ -177,16 +183,20 @@ app.post('/api/products', upload.single('image'), async (req, res) => {
     }
 });
 
-app.put('/api/products/:id', upload.single('image'), async (req, res) => {
+app.put('/api/products/:id', upload.array('images', 5), async (req, res) => {
     try {
         const updateData = {
             name: req.body.name,
             nameAr: req.body.nameAr,
             price: req.body.price,
-            category: req.body.category
+            category: req.body.category,
+            description: req.body.description || '',
+            descriptionAr: req.body.descriptionAr || ''
         };
-        if (req.file) {
-            updateData.image = getImageUrl(req);
+        const imageUrls = getImageUrls(req);
+        if (imageUrls.length > 0) {
+            updateData.images = imageUrls;
+            updateData.image = imageUrls[0];
         }
         const updatedProduct = await Product.findByIdAndUpdate(req.params.id, updateData, { new: true });
         res.json(updatedProduct);
@@ -216,7 +226,7 @@ app.get('/api/offers', async (req, res) => {
 
 app.post('/api/offers', upload.single('image'), async (req, res) => {
     try {
-        const imageUrl = getImageUrl(req);
+        const imageUrl = req.file ? (req.file.path || req.file.secure_url || `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`) : '';
         const newOffer = new Offer({
             title: req.body.title,
             titleAr: req.body.titleAr,
@@ -246,7 +256,7 @@ app.put('/api/offers/:id', upload.single('image'), async (req, res) => {
             price: req.body.price
         };
         if (req.file) {
-            updateData.image = getImageUrl(req);
+            updateData.image = req.file.path || req.file.secure_url || `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
         }
         const updatedOffer = await Offer.findByIdAndUpdate(req.params.id, updateData, { new: true });
         res.json(updatedOffer);
@@ -293,9 +303,9 @@ app.delete('/api/orders/:id', async (req, res) => {
     }
 });
 
-// 5. Start Server
+module.exports = app;
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    module.exports = app;
     console.log(`🚀 Server listening on port ${PORT}`);
 });

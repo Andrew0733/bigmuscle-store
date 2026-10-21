@@ -1,84 +1,164 @@
-async function loadProducts() {
-    const productsGrid = document.getElementById('products-grid');
+document.addEventListener('DOMContentLoaded', () => {
+    fetchProducts();
+    createProductModalHTML();
+});
+
+let currentModalProduct = null;
+
+async function fetchProducts() {
+    const productsGrid = document.getElementById('productsGrid');
     if (!productsGrid) return;
 
     try {
         const response = await fetch('/api/products');
-        let products = await response.json();
+        const products = await response.json();
 
-        // قراءة اللينك (هل العميل دايس على قسم؟ ولا عامل بحث؟)
         const urlParams = new URLSearchParams(window.location.search);
-        const categoryParam = urlParams.get('category');
-        const searchParam = urlParams.get('search'); // الكلمة المبحوث عنها
-        
-        const isAr = document.body.classList.contains('rtl');
-        const catTitle = document.getElementById('category-title');
+        const searchQuery = urlParams.get('search')?.toLowerCase();
+        const categoryQuery = urlParams.get('category');
 
-        // فلترة بناءً على القسم أو البحث
-        if (categoryParam) {
-            products = products.filter(p => p.category === categoryParam);
-            if (catTitle) {
-                const arabicTitles = { "Whey Protein": "واي بروتين", "Creatine": "كرياتين", "Pre-Workout": "قبل التمرين" };
-                catTitle.textContent = isAr ? (arabicTitles[categoryParam] || categoryParam) : categoryParam.toUpperCase();
-            }
-        } else if (searchParam) {
-            // لو العميل عامل بحث
-            const lowerQuery = searchParam.toLowerCase();
-            products = products.filter(p => 
-                (p.name && p.name.toLowerCase().includes(lowerQuery)) || 
-                (p.nameAr && p.nameAr.toLowerCase().includes(lowerQuery)) ||
-                (p.category && p.category.toLowerCase().includes(lowerQuery))
+        let filteredProducts = products;
+
+        if (searchQuery) {
+            filteredProducts = filteredProducts.filter(p => 
+                (p.name && p.name.toLowerCase().includes(searchQuery)) ||
+                (p.nameAr && p.nameAr.toLowerCase().includes(searchQuery)) ||
+                (p.category && p.category.toLowerCase().includes(searchQuery))
             );
-            if (catTitle) {
-                catTitle.textContent = isAr ? `نتائج البحث عن: "${searchParam}"` : `SEARCH RESULTS: "${searchParam}"`;
-            }
-        } else if (catTitle) {
-            catTitle.textContent = isAr ? 'كل المنتجات' : 'ALL PRODUCTS';
         }
 
-        // لو مفيش نتيجة للبحث
-        if (products.length === 0) {
-            const emptyMsg = searchParam 
-                ? (isAr ? 'لم يتم العثور على منتجات مطابقة لبحثك.' : 'No products matched your search.')
-                : (isAr ? 'لا توجد منتجات حالياً.' : 'No products available.');
-                
-            productsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #888; font-size: 1.2rem;">${emptyMsg}</p>`;
+        if (categoryQuery) {
+            filteredProducts = filteredProducts.filter(p => 
+                p.category && p.category.toLowerCase() === categoryQuery.toLowerCase()
+            );
+        }
+
+        if (filteredProducts.length === 0) {
+            productsGrid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px;">
+                    <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 10px;"></i>
+                    <p data-en="No products found" data-ar="لا توجد منتجات مطابقة">لا توجد منتجات مطابقة</p>
+                </div>`;
             return;
         }
 
-        // رسم المنتجات
-        productsGrid.innerHTML = products.map(product => {
-            const productName = isAr ? (product.nameAr || product.name) : product.name;
-            const currency = isAr ? 'ج.م' : 'EGP';
-            const btnText = isAr ? 'أضف للسلة' : 'Add to Cart';
-
-            return `
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="${product.image}" alt="${productName}" onerror="this.src='https://via.placeholder.com/200?text=Big+Muscle'" style="max-width:100%; max-height:100%; object-fit:contain;">
-                    </div>
-                    <h3 class="product-name">${productName}</h3>
-                    <p class="product-desc" style="color:var(--primary-red); font-weight:bold;">${product.category}</p>
-                    <div class="product-price">
-                        <span class="price-val">${product.price}</span>
-                        <span class="currency">${currency}</span>
-                    </div>
-                    <button class="btn btn-outline" onclick="addToCart('${product._id}', '${productName}', ${product.price}, '${product.image}')">${btnText}</button>
-                </div>
-            `;
-        }).join('');
-
-    } catch (err) {
-        console.error('Error loading products:', err);
-        productsGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: red;">فشل في تحميل المنتجات من السيرفر</p>';
+        renderProducts(filteredProducts);
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        productsGrid.innerHTML = '<p style="color:red; text-align:center;">Failed to load products.</p>';
     }
 }
 
-document.addEventListener('DOMContentLoaded', loadProducts);
+function renderProducts(products) {
+    const productsGrid = document.getElementById('productsGrid');
+    const currentLang = localStorage.getItem('lang') || 'en';
 
-const langBtnToggle = document.getElementById('lang-toggle');
-if (langBtnToggle) {
-    langBtnToggle.addEventListener('click', () => {
-        setTimeout(loadProducts, 50);
-    });
+    productsGrid.innerHTML = products.map(product => {
+        const name = currentLang === 'ar' ? product.nameAr : product.name;
+        const mainImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || '');
+
+        return `
+            <div class="product-card" onclick="openProductModal(${JSON.stringify(product).replace(/"/g, '&quot;')})">
+                <div class="product-image">
+                    <img src="${mainImg}" alt="${name}" loading="lazy" onerror="this.src='https://via.placeholder.com/200'">
+                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product._id}', '${name.replace(/'/g, "\\'")}', ${product.price}, '${mainImg}')">
+                        <i class="fa-solid fa-cart-shopping"></i> <span data-en="Add to Cart" data-ar="أضف للسلة">Add to Cart</span>
+                    </button>
+                </div>
+                <div class="product-info">
+                    <span class="product-category">${product.category}</span>
+                    <h3 class="product-title">${name}</h3>
+                    <div class="product-price">${product.price} EGP</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Modal Generation & Logic
+function createProductModalHTML() {
+    if (document.getElementById('productDetailModal')) return;
+
+    const modalHTML = `
+      <div class="product-modal-backdrop" id="productDetailModal" onclick="closeProductModal(event)">
+        <div class="product-modal-content" onclick="event.stopPropagation()">
+          <button class="product-modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
+          
+          <div class="product-modal-gallery">
+            <img id="modalMainImg" src="" class="product-modal-main-img" alt="Product Image">
+            <div class="product-modal-thumbs" id="modalThumbs"></div>
+          </div>
+
+          <div class="product-modal-info">
+            <span class="product-modal-cat" id="modalCat">CATEGORY</span>
+            <h2 class="product-modal-title" id="modalTitle">Product Title</h2>
+            <div class="product-modal-price" id="modalPrice">0 EGP</div>
+            <div class="product-modal-desc" id="modalDesc">No details available.</div>
+            
+            <button class="product-modal-add-btn" id="modalAddBtn">
+              <i class="fa-solid fa-cart-shopping"></i>
+              <span data-en="ADD TO CART" data-ar="أضف إلى السلة">ADD TO CART</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function openProductModal(product) {
+    currentModalProduct = product;
+    const currentLang = localStorage.getItem('lang') || 'en';
+
+    const modal = document.getElementById('productDetailModal');
+    const mainImg = document.getElementById('modalMainImg');
+    const thumbsContainer = document.getElementById('modalThumbs');
+    const cat = document.getElementById('modalCat');
+    const title = document.getElementById('modalTitle');
+    const price = document.getElementById('modalPrice');
+    const desc = document.getElementById('modalDesc');
+    const addBtn = document.getElementById('modalAddBtn');
+
+    const name = currentLang === 'ar' ? product.nameAr : product.name;
+    const descriptionText = currentLang === 'ar' ? (product.descriptionAr || product.description) : (product.description || product.descriptionAr);
+    
+    // Images Gallery
+    let imageList = (product.images && product.images.length > 0) ? product.images : [product.image];
+    imageList = imageList.filter(Boolean);
+
+    mainImg.src = imageList[0] || 'https://via.placeholder.com/300';
+
+    thumbsContainer.innerHTML = '';
+    if (imageList.length > 1) {
+        imageList.forEach((imgUrl, index) => {
+            const thumb = document.createElement('img');
+            thumb.src = imgUrl;
+            thumb.className = `product-modal-thumb ${index === 0 ? 'active' : ''}`;
+            thumb.onclick = () => {
+                mainImg.src = imgUrl;
+                document.querySelectorAll('.product-modal-thumb').forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+            };
+            thumbsContainer.appendChild(thumb);
+        });
+    }
+
+    cat.innerText = product.category || 'SUPPLEMENT';
+    title.innerText = name;
+    price.innerText = `${product.price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}`;
+    desc.innerText = descriptionText || (currentLang === 'ar' ? 'لا توجد تفاصيل إضافية للمنتج.' : 'No additional details available for this product.');
+
+    addBtn.onclick = () => {
+        addToCart(product._id, name, product.price, imageList[0]);
+        closeProductModal();
+    };
+
+    modal.classList.add('active');
+}
+
+function closeProductModal(e) {
+    if (!e || e.target.id === 'productDetailModal' || e.target.closest('.product-modal-close')) {
+        const modal = document.getElementById('productDetailModal');
+        if (modal) modal.classList.remove('active');
+    }
 }
