@@ -268,3 +268,72 @@ ul {
 .add-to-cart-btn:hover {
   background: #b30000 !important;
 }
+
+/* =========================================
+   MOBILE: عرض منتجين فقط بحجم أكبر وأوضح
+   ========================================= */
+@media (max-width: 768px) {
+
+  .products-grid,
+  #productsGrid,
+  #featuredProductsGrid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    padding: 10px 0 !important;
+  }
+
+  .product-card {
+    height: auto !important;
+    min-height: 230px !important;
+    border-radius: 10px !important;
+  }
+
+  .product-image {
+    height: 140px !important;
+    padding: 8px !important;
+  }
+
+  .product-info {
+    padding: 10px !important;
+  }
+
+  .product-category {
+    font-size: 0.65rem !important;
+  }
+
+  .product-title {
+    font-size: 0.82rem !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  .product-price {
+    font-size: 1.05rem !important;
+  }
+
+  /* الموبايل مفيهوش Hover — فزرار السلة يبقى ظاهر دايماً */
+  .add-to-cart-btn {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
+    bottom: 8px !important;
+    padding: 6px 12px !important;
+    font-size: 0.72rem !important;
+  }
+}
+
+/* شاشات صغيرة جداً (أقل من 380px): نفس العرض 2 لكن خطوط أصغر شوية */
+@media (max-width: 380px) {
+  .products-grid,
+  #productsGrid,
+  #featuredProductsGrid {
+    gap: 8px !important;
+  }
+  .product-image {
+    height: 120px !important;
+  }
+  .product-title {
+    font-size: 0.75rem !important;
+  }
+  .product-price {
+    font-size: 0.95rem !important;
+  }
+}
