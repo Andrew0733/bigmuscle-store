@@ -114,6 +114,7 @@ function openProductModalById(id) {
 }
 
 // Modal Generation & Logic
+// Modal Generation & Logic
 function createProductModalHTML() {
     if (document.getElementById('productDetailModal')) return;
 
@@ -123,7 +124,9 @@ function createProductModalHTML() {
           <button class="product-modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
           
           <div class="product-modal-gallery">
-            <img id="modalMainImg" src="" class="product-modal-main-img" alt="Product Image">
+            <div class="product-modal-main-wrap">
+              <img id="modalMainImg" src="" class="product-modal-main-img" alt="Product Image">
+            </div>
             <div class="product-modal-thumbs" id="modalThumbs"></div>
           </div>
 
@@ -159,28 +162,45 @@ function openProductModal(product) {
     const displayName = currentLang === 'ar' ? (product.nameAr || product.name) : (product.name || product.nameAr);
     const descriptionText = currentLang === 'ar' ? (product.descriptionAr || product.description) : (product.description || product.descriptionAr);
     
-    // Images Gallery
+    // إعداد واستخراج كل الصور بدون تكرار
     let imageList = [];
     if (Array.isArray(product.images) && product.images.length > 0) {
-        imageList = product.images.filter(Boolean);
-    } else if (product.image) {
+        imageList = product.images.filter(img => img && typeof img === 'string');
+    }
+    if (imageList.length === 0 && product.image) {
         imageList = [product.image];
     }
+    // إزالة الصور المكررة إن وجدت
+    imageList = Array.from(new Set(imageList));
 
     const firstImg = imageList[0] || 'https://via.placeholder.com/300';
     mainImg.src = firstImg;
 
+    // بناء المصغرات وتفعيل إمكانية الضغط والتبديل المباشر
     thumbsContainer.innerHTML = '';
     if (imageList.length > 1) {
         imageList.forEach((imgUrl, index) => {
             const thumb = document.createElement('img');
             thumb.src = imgUrl;
+            thumb.alt = `Thumbnail ${index + 1}`;
             thumb.className = `product-modal-thumb ${index === 0 ? 'active' : ''}`;
-            thumb.onclick = () => {
-                mainImg.src = imgUrl;
-                document.querySelectorAll('.product-modal-thumb').forEach(t => t.classList.remove('active'));
+            
+            thumb.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                // تأثير تبديل الصورة بسلاسة
+                mainImg.style.opacity = '0.3';
+                setTimeout(() => {
+                    mainImg.src = imgUrl;
+                    mainImg.style.opacity = '1';
+                }, 120);
+
+                const allThumbs = thumbsContainer.querySelectorAll('.product-modal-thumb');
+                allThumbs.forEach(t => t.classList.remove('active'));
                 thumb.classList.add('active');
-            };
+            });
+
             thumbsContainer.appendChild(thumb);
         });
     }
