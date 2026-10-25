@@ -1,121 +1,138 @@
 document.addEventListener('DOMContentLoaded', () => {
+    initLang();
+    initMobileMenu();
+    initSearch();
+    updateCartCount();
+});
 
-    // 1. نظام تغيير اللغة (عربي / إنجليزي)
-    const langBtn = document.getElementById('lang-toggle');
-    if (langBtn) {
-        let currentLang = 'en';
+// 1. Language Toggle (AR / EN)
+function initLang() {
+    const langBtn = document.getElementById('langToggleBtn');
+    if (!langBtn) return;
 
-        langBtn.addEventListener('click', () => {
-            currentLang = currentLang === 'en' ? 'ar' : 'en';
+    // Read saved lang or default to EN
+    const savedLang = localStorage.getItem('lang') || 'en';
+    applyLang(savedLang);
 
-            if (currentLang === 'ar') {
-                document.body.classList.add('rtl');
-                document.body.setAttribute('dir', 'rtl');
-                langBtn.textContent = 'English';
-            } else {
-                document.body.classList.remove('rtl');
-                document.body.setAttribute('dir', 'ltr');
-                langBtn.textContent = 'عربي';
-            }
+    langBtn.addEventListener('click', () => {
+        const currentLang = localStorage.getItem('lang') || 'en';
+        const newLang = currentLang === 'en' ? 'ar' : 'en';
+        localStorage.setItem('lang', newLang);
+        applyLang(newLang);
+        window.location.reload(); // Reload to refresh elements
+    });
+}
 
-            const elements = document.querySelectorAll('[data-ar][data-en]');
-            elements.forEach(el => {
-                el.innerHTML = el.getAttribute(`data-${currentLang}`);
-            });
-        });
+function applyLang(lang) {
+    const langBtn = document.getElementById('langToggleBtn');
+    if (lang === 'ar') {
+        document.body.classList.add('rtl');
+        document.documentElement.dir = 'rtl';
+        document.documentElement.lang = 'ar';
+        if (langBtn) langBtn.innerText = 'EN';
+    } else {
+        document.body.classList.remove('rtl');
+        document.documentElement.dir = 'ltr';
+        document.documentElement.lang = 'en';
+        if (langBtn) langBtn.innerText = 'AR';
     }
 
-    // 2. القائمة المنسدلة للموبايل (Mobile Hamburger Menu)
-    const mobileMenuBtn = document.getElementById('mobile-menu');
-    const navLinks = document.querySelector('.nav-links');
-
-    if (mobileMenuBtn && navLinks) {
-        mobileMenuBtn.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-            const icon = mobileMenuBtn.querySelector('i');
-            if (icon) {
-                if (navLinks.classList.contains('active')) {
-                    icon.classList.remove('fa-bars');
-                    icon.classList.add('fa-times');
-                } else {
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            }
-        });
-    }
-
-    // 3. مودال من نحن (About Us Modal)
-    const aboutBtn = document.getElementById('aboutUsBtn');
-    const aboutModal = document.getElementById('aboutModal');
-    const closeAboutBtn = document.getElementById('closeAboutModal');
-
-    function openAboutModal() {
-        if (!aboutModal) return;
-        aboutModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-
-        const isAr = document.body.classList.contains('rtl');
-        aboutModal.querySelectorAll('[data-ar][data-en]').forEach(el => {
-            el.innerHTML = el.getAttribute(isAr ? 'data-ar' : 'data-en');
-        });
-    }
-
-    function closeAboutModal() {
-        if (!aboutModal) return;
-        aboutModal.classList.remove('active');
-        document.body.style.overflow = '';
-    }
-
-    if (aboutBtn) {
-        aboutBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            openAboutModal();
-        });
-    }
-
-    if (closeAboutBtn) {
-        closeAboutBtn.addEventListener('click', closeAboutModal);
-    }
-
-    if (aboutModal) {
-        aboutModal.addEventListener('click', (e) => {
-            if (e.target === aboutModal) closeAboutModal();
-        });
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeAboutModal();
+    // Translate elements with data-en and data-ar
+    document.querySelectorAll('[data-en]').forEach(el => {
+        const text = lang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
+        if (text) el.innerText = text;
     });
 
+    // Translate placeholders
+    document.querySelectorAll('[data-en-placeholder]').forEach(el => {
+        const placeholder = lang === 'ar' ? el.getAttribute('data-ar-placeholder') : el.getAttribute('data-en-placeholder');
+        if (placeholder) el.placeholder = placeholder;
+    });
+}
 
-        // ===== نظام البحث (Search) =====
+// 2. Mobile Sidebar & Hamburger Handler
+function initMobileMenu() {
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const navMenu = document.getElementById('navMenu');
+    let navOverlay = document.getElementById('navOverlay');
+
+    // Create overlay if not present
+    if (!navOverlay) {
+        navOverlay = document.createElement('div');
+        navOverlay.id = 'navOverlay';
+        navOverlay.className = 'nav-overlay';
+        document.body.appendChild(navOverlay);
+    }
+
+    function toggleMenu(open) {
+        if (!navMenu) return;
+        const shouldOpen = open !== undefined ? open : !navMenu.classList.contains('active');
+        
+        if (shouldOpen) {
+            navMenu.classList.add('active');
+            if (hamburgerBtn) hamburgerBtn.classList.add('active');
+            navOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } else {
+            navMenu.classList.remove('active');
+            if (hamburgerBtn) hamburgerBtn.classList.remove('active');
+            navOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+    }
+
+    if (hamburgerBtn) {
+        hamburgerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
+    }
+
+    if (navOverlay) {
+        navOverlay.addEventListener('click', () => toggleMenu(false));
+    }
+
+    // Dropdown toggle on mobile
+    const dropdowns = document.querySelectorAll('.nav-item.dropdown');
+    dropdowns.forEach(drop => {
+        const link = drop.querySelector('.nav-link');
+        if (link) {
+            link.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    drop.classList.toggle('open');
+                }
+            });
+        }
+    });
+}
+
+// 3. Global Search
+function initSearch() {
     const searchInput = document.getElementById('searchInput');
     const searchBtn = document.getElementById('searchBtn');
 
     function executeSearch() {
+        if (!searchInput) return;
         const query = searchInput.value.trim();
         if (query) {
-            // بيحول العميل لصفحة المنتجات ويبعت معاها كلمة البحث
             window.location.href = `products.html?search=${encodeURIComponent(query)}`;
         }
     }
 
-    if (searchBtn) {
-        searchBtn.addEventListener('click', executeSearch);
-    }
-
+    if (searchBtn) searchBtn.addEventListener('click', executeSearch);
     if (searchInput) {
         searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                executeSearch();
-            }
+            if (e.key === 'Enter') executeSearch();
         });
     }
+}
 
-
-
-
-
-
-});
+// 4. Cart Count Badge
+function updateCartCount() {
+    const badge = document.getElementById('cartCount');
+    if (!badge) return;
+    const cart = JSON.parse(localStorage.getItem('bigMuscleCart') || '[]');
+    const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    badge.innerText = totalItems;
+}
