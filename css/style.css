@@ -711,30 +711,26 @@ footer {
 }
 
 /* =========================================
-   MOBILE VIEW: 2 PRODUCTS PER ROW (LARGE & CLEAR)
+   FORCE 2 PRODUCTS PER ROW ON MOBILE
    ========================================= */
-@media (max-width: 900px) {
+@media screen and (max-width: 900px) {
 
-  /* إجبار الشبكة على عرض عمودين فقط (منتجين في الصف) */
   .products-grid,
   #productsGrid,
   #featuredProductsGrid {
     display: grid !important;
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: 1fr 1fr !important; /* عمودين فقط لكل الشاشات */
     gap: 12px !important;
     padding: 10px 0 !important;
   }
 
-  /* تكبير الكارت ومساحته */
   .product-card {
     height: auto !important;
     min-height: 290px !important;
-    border-radius: 10px !important;
   }
 
-  /* تكبير مساحة الصورة بشكل ملحوظ لتبدو واضحة جداً */
   .product-image {
-    height: 180px !important; /* زيادة الارتفاع من 140px لـ 180px لتكبير الصور */
+    height: 180px !important; /* تكبير منطقة الصورة */
     padding: 10px !important;
   }
 
@@ -743,52 +739,22 @@ footer {
     object-fit: contain !important;
   }
 
-  .product-info {
-    padding: 12px !important;
-  }
-
-  .product-category {
-    font-size: 0.7rem !important;
-  }
-
-  /* تكبير الخطوط لتكون مقروءة وواضحة */
   .product-title {
     font-size: 0.9rem !important;
-    line-height: 1.3 !important;
-    margin: 5px 0 !important;
-    display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
     line-clamp: 2 !important;
-    -webkit-box-orient: vertical !important;
-    overflow: hidden !important;
   }
 
   .product-price {
     font-size: 1.15rem !important;
-    font-weight: bold !important;
   }
 
-  /* إظهار زرار أضف للسلة بوضوح أسفل كل كارت */
   .add-to-cart-btn {
     opacity: 1 !important;
     transform: translateX(-50%) translateY(0) !important;
     bottom: 8px !important;
-    padding: 7px 14px !important;
+    padding: 7px 12px !important;
     font-size: 0.78rem !important;
     width: 85% !important;
-    text-align: center !important;
-  }
-}
-
-/* للشاشات الصغيرة جداً (أقل من 360px) */
-@media (max-width: 360px) {
-  .product-image {
-    height: 150px !important;
-  }
-  .product-title {
-    font-size: 0.8rem !important;
-  }
-  .product-price {
-    font-size: 1rem !important;
   }
 }
