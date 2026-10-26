@@ -1,281 +1,116 @@
-/* ==========================================================================
-   BIG MUSCLE STORE - MAIN APPLICATION LOGIC (v8.0 Dynamic Modal & Nav Fix)
-   ========================================================================== */
-
-// Global Mobile Menu Toggle
-/*window.toggleMobileMenu = function() {
-  const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
-  if (navMenu) {
-    navMenu.classList.toggle('active');
-  }
-};
-
 document.addEventListener('DOMContentLoaded', () => {
-  initHamburgerMenu();
-  initLangToggle();
-  initCartBadge();
-  initSearch();
-  ensureModalExists();
+
+    // 1. نظام تغيير اللغة (عربي / إنجليزي)
+    const langBtn = document.getElementById('lang-toggle');
+    if (langBtn) {
+        let currentLang = 'en';
+
+        langBtn.addEventListener('click', () => {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+
+            if (currentLang === 'ar') {
+                document.body.classList.add('rtl');
+                document.body.setAttribute('dir', 'rtl');
+                langBtn.textContent = 'English';
+            } else {
+                document.body.classList.remove('rtl');
+                document.body.setAttribute('dir', 'ltr');
+                langBtn.textContent = 'عربي';
+            }
+
+            const elements = document.querySelectorAll('[data-ar][data-en]');
+            elements.forEach(el => {
+                el.innerHTML = el.getAttribute(`data-${currentLang}`);
+            });
+        });
+    }
+
+    // 2. القائمة المنسدلة للموبايل (Mobile Hamburger Menu)
+    const mobileMenuBtn = document.getElementById('mobile-menu');
+    const navLinks = document.querySelector('.nav-links');
+
+    if (mobileMenuBtn && navLinks) {
+        mobileMenuBtn.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = mobileMenuBtn.querySelector('i');
+            if (icon) {
+                if (navLinks.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            }
+        });
+    }
+
+    // 3. مودال من نحن (About Us Modal)
+    const aboutBtn = document.getElementById('aboutUsBtn');
+    const aboutModal = document.getElementById('aboutModal');
+    const closeAboutBtn = document.getElementById('closeAboutModal');
+
+    function openAboutModal() {
+        if (!aboutModal) return;
+        aboutModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        const isAr = document.body.classList.contains('rtl');
+        aboutModal.querySelectorAll('[data-ar][data-en]').forEach(el => {
+            el.innerHTML = el.getAttribute(isAr ? 'data-ar' : 'data-en');
+        });
+    }
+
+    function closeAboutModal() {
+        if (!aboutModal) return;
+        aboutModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    if (aboutBtn) {
+        aboutBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            openAboutModal();
+        });
+    }
+
+    if (closeAboutBtn) {
+        closeAboutBtn.addEventListener('click', closeAboutModal);
+    }
+
+    if (aboutModal) {
+        aboutModal.addEventListener('click', (e) => {
+            if (e.target === aboutModal) closeAboutModal();
+        });
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeAboutModal();
+    });
+
+    // ===== نظام البحث (Search) =====
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+
+    function executeSearch() {
+        const query = searchInput.value.trim();
+        if (query) {
+            // بيحول العميل لصفحة المنتجات ويبعت معاها كلمة البحث
+            window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+        }
+    }
+
+    if (searchBtn) {
+        searchBtn.addEventListener('click', executeSearch);
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                executeSearch();
+            }
+        });
+    }
+
+
 });
-
-function initHamburgerMenu() {
-  const hamburgerBtn = document.getElementById('hamburgerBtn') || document.querySelector('.hamburger-btn');
-  const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
-
-  if (hamburgerBtn) {
-    hamburgerBtn.onclick = function(e) {
-      e.stopPropagation();
-      window.toggleMobileMenu();
-    };
-  }
-
-  document.addEventListener('click', (e) => {
-    if (navMenu && navMenu.classList.contains('active')) {
-      if (!navMenu.contains(e.target) && hamburgerBtn && !hamburgerBtn.contains(e.target)) {
-        navMenu.classList.remove('active');
-      }
-    }
-  });
-}
-
-function initLangToggle() {
-  const langToggleBtn = document.getElementById('langToggle');
-  const currentLang = localStorage.getItem('lang') || 'en';
-  
-  if (currentLang === 'ar') {
-    document.body.classList.add('rtl');
-    if (langToggleBtn) langToggleBtn.textContent = 'EN';
-  } else {
-    document.body.classList.remove('rtl');
-    if (langToggleBtn) langToggleBtn.textContent = 'AR';
-  }
-
-  if (langToggleBtn) {
-    langToggleBtn.onclick = function() {
-      const isRtl = document.body.classList.toggle('rtl');
-      const newLang = isRtl ? 'ar' : 'en';
-      localStorage.setItem('lang', newLang);
-      langToggleBtn.textContent = isRtl ? 'EN' : 'AR';
-      location.reload();
-    };
-  }
-}
-
-function initCartBadge() {
-  const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
-  const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-  const badgeEl = document.getElementById('cartBadge');
-  if (badgeEl) {
-    badgeEl.textContent = totalCount;
-  }
-}
-
-function initSearch() {
-  const searchInput = document.getElementById('searchInput');
-  const searchBtn = document.getElementById('searchBtn');
-
-  const executeSearch = () => {
-    const query = searchInput ? searchInput.value.trim() : '';
-    if (query) {
-      window.location.href = `products.html?search=${encodeURIComponent(query)}`;
-    }
-  };
-
-  if (searchBtn) searchBtn.onclick = executeSearch;
-  if (searchInput) {
-    searchInput.onkeypress = function(e) {
-      if (e.key === 'Enter') executeSearch();
-    };
-  }
-}
-
-// Ensures the Modal HTML element exists dynamically on any page
-function ensureModalExists() {
-  if (document.getElementById('productModal')) return;
-
-  const modalHtml = `
-    <div class="modal-overlay" id="productModal">
-      <div class="modal-content">
-        <button class="modal-close-btn" onclick="window.closeProductModal()">&times;</button>
-        <div class="modal-gallery">
-          <div class="main-image-box">
-            <img id="modalMainImg" src="" alt="Product Detail">
-          </div>
-          <div class="thumbnails-row" id="modalThumbnails"></div>
-        </div>
-        <div class="modal-details">
-          <span class="product-category" id="modalCategory">Category</span>
-          <h2 id="modalTitle" style="color: #fff; font-family: var(--font-heading); font-size: 1.4rem;">Product Title</h2>
-          <div class="product-price" id="modalPrice" style="font-size: 1.3rem; font-weight: 800; color: var(--primary-color);">0 EGP</div>
-          <p id="modalDescription" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 10px 0;">Description...</p>
-          <button id="modalAddToCartBtn" class="add-to-cart-btn" style="position: static !important; width: 100% !important; height: 42px !important; transform: none !important; opacity: 1 !important; font-size: 0.95rem !important; border-radius: 8px !important;">
-            <i class="fas fa-shopping-cart"></i> <span>Add to Cart</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  `;
-  document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-  const modal = document.getElementById('productModal');
-  modal.onclick = function(e) {
-    if (e.target === modal) window.closeProductModal();
-  };
-}
-
-// Global Product Modal Functions
-window.openProductModal = function(productId) {
-  ensureModalExists();
-
-  const products = window.allLoadedProducts || [];
-  const product = products.find(p => String(p._id) === String(productId));
-  if (!product) return;
-
-  const modal = document.getElementById('productModal');
-  if (!modal) return;
-
-  const lang = localStorage.getItem('lang') || 'en';
-  const images = (product.images && product.images.length > 0) ? product.images : [product.image || 'images/logo.png'];
-
-  const mainImg = document.getElementById('modalMainImg');
-  const thumbsContainer = document.getElementById('modalThumbnails');
-  const catEl = document.getElementById('modalCategory');
-  const titleEl = document.getElementById('modalTitle');
-  const priceEl = document.getElementById('modalPrice');
-  const descEl = document.getElementById('modalDescription');
-  const cartBtn = document.getElementById('modalAddToCartBtn');
-
-  if (mainImg) mainImg.src = images[0];
-  if (thumbsContainer) {
-    thumbsContainer.innerHTML = images.map((imgUrl, idx) => `
-      <img src="${imgUrl}" class="thumb-img ${idx === 0 ? 'active' : ''}" onclick="window.changeModalImage('${imgUrl}', this)">
-    `).join('');
-  }
-
-  if (catEl) catEl.textContent = product.category || '';
-  if (titleEl) titleEl.textContent = lang === 'ar' ? (product.nameAr || product.name) : product.name;
-  if (priceEl) priceEl.textContent = `${product.price} EGP`;
-  if (descEl) descEl.textContent = lang === 'ar' ? (product.descriptionAr || product.description || 'لا يوجد وصف متاح') : (product.description || 'No detailed description available.');
-
-  if (cartBtn) {
-    cartBtn.onclick = function(e) {
-      if (e) e.stopPropagation();
-      if (typeof addToCart === 'function') {
-        addToCart(product._id, product.name, product.nameAr, product.price, images[0]);
-      }
-      modal.classList.remove('active');
-    };
-  }
-
-  modal.classList.add('active');
-};
-
-window.closeProductModal = function() {
-  const modal = document.getElementById('productModal');
-  if (modal) modal.classList.remove('active');
-};
-
-window.changeModalImage = function(imgUrl, thumbEl) {
-  const mainImg = document.getElementById('modalMainImg');
-  if (mainImg) mainImg.src = imgUrl;
-  document.querySelectorAll('.thumb-img').forEach(el => el.classList.remove('active'));
-  if (thumbEl) thumbEl.classList.add('active');
-};*/
-
-/* ==========================================================================
-   BIG MUSCLE STORE - MAIN JS (Step 1: Direct Hamburger Toggle)
-   ========================================================================== */
-
-// Global Toggle Function for Mobile Menu
-
-
-
-
-/* ==========================================================================
-   BIG MUSCLE STORE - MAIN JS (Step 1: Bulletproof Hamburger Menu)
-   ========================================================================== */
-
-// Global Mobile Menu Toggle
-window.toggleMobileNav = function(e) {
-  if (e && e.stopPropagation) e.stopPropagation();
-  const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
-  if (navMenu) {
-    navMenu.classList.toggle('show-mobile');
-  }
-};
-
-// Catch clicks anywhere on the document for hamburger & outside menu
-document.addEventListener('click', (e) => {
-  const burgerBtn = e.target.closest('#hamburgerBtn') || e.target.closest('.hamburger-btn');
-  if (burgerBtn) {
-    window.toggleMobileNav(e);
-    return;
-  }
-
-  const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
-  if (navMenu && navMenu.classList.contains('show-mobile')) {
-    if (!navMenu.contains(e.target)) {
-      navMenu.classList.remove('show-mobile');
-    }
-  }
-});
-
-document.addEventListener('DOMContentLoaded', () => {
-  initLangToggle();
-  initCartBadge();
-  initSearch();
-});
-
-// Language Toggle
-function initLangToggle() {
-  const langToggleBtn = document.getElementById('langToggle');
-  const currentLang = localStorage.getItem('lang') || 'en';
-  
-  if (currentLang === 'ar') {
-    document.body.classList.add('rtl');
-    if (langToggleBtn) langToggleBtn.textContent = 'EN';
-  } else {
-    document.body.classList.remove('rtl');
-    if (langToggleBtn) langToggleBtn.textContent = 'AR';
-  }
-
-  if (langToggleBtn) {
-    langToggleBtn.onclick = function() {
-      const isRtl = document.body.classList.toggle('rtl');
-      const newLang = isRtl ? 'ar' : 'en';
-      localStorage.setItem('lang', newLang);
-      langToggleBtn.textContent = isRtl ? 'EN' : 'AR';
-      location.reload();
-    };
-  }
-}
-
-// Update Cart Badge
-function initCartBadge() {
-  const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
-  const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-  const badgeEl = document.getElementById('cartBadge');
-  if (badgeEl) {
-    badgeEl.textContent = totalCount;
-  }
-}
-
-// Search
-function initSearch() {
-  const searchInput = document.getElementById('searchInput');
-  const searchBtn = document.getElementById('searchBtn');
-
-  const executeSearch = () => {
-    const query = searchInput ? searchInput.value.trim() : '';
-    if (query) {
-      window.location.href = `products.html?search=${encodeURIComponent(query)}`;
-    }
-  };
-
-  if (searchBtn) searchBtn.onclick = executeSearch;
-  if (searchInput) {
-    searchInput.onkeypress = function(e) {
-      if (e.key === 'Enter') executeSearch();
-    };
-  }
-}
