@@ -1,138 +1,151 @@
+/* ==========================================================================
+   BIG MUSCLE STORE - MAIN APPLICATION LOGIC
+   ========================================================================== */
+
 document.addEventListener('DOMContentLoaded', () => {
-    initLang();
-    initMobileMenu();
-    initSearch();
-    updateCartCount();
+  initHamburgerMenu();
+  initLangToggle();
+  initCartBadge();
+  initModalCloseHandlers();
+  initSearch();
 });
 
-// 1. Language Toggle (AR / EN)
-function initLang() {
-    const langBtn = document.getElementById('langToggleBtn');
-    if (!langBtn) return;
+// 1. Mobile Hamburger Menu Toggle
+function initHamburgerMenu() {
+  const hamburgerBtn = document.getElementById('hamburgerBtn');
+  const navMenu = document.getElementById('navMenu');
 
-    // Read saved lang or default to EN
-    const savedLang = localStorage.getItem('lang') || 'en';
-    applyLang(savedLang);
-
-    langBtn.addEventListener('click', () => {
-        const currentLang = localStorage.getItem('lang') || 'en';
-        const newLang = currentLang === 'en' ? 'ar' : 'en';
-        localStorage.setItem('lang', newLang);
-        applyLang(newLang);
-        window.location.reload(); // Reload to refresh elements
+  if (hamburgerBtn && navMenu) {
+    hamburgerBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      navMenu.classList.toggle('active');
     });
+
+    document.addEventListener('click', (e) => {
+      if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+        navMenu.classList.remove('active');
+      }
+    });
+  }
 }
 
-function applyLang(lang) {
-    const langBtn = document.getElementById('langToggleBtn');
-    if (lang === 'ar') {
-        document.body.classList.add('rtl');
-        document.documentElement.dir = 'rtl';
-        document.documentElement.lang = 'ar';
-        if (langBtn) langBtn.innerText = 'EN';
-    } else {
-        document.body.classList.remove('rtl');
-        document.documentElement.dir = 'ltr';
-        document.documentElement.lang = 'en';
-        if (langBtn) langBtn.innerText = 'AR';
-    }
+// 2. Language Toggle
+function initLangToggle() {
+  const langToggleBtn = document.getElementById('langToggle');
+  const currentLang = localStorage.getItem('lang') || 'en';
+  
+  if (currentLang === 'ar') {
+    document.body.classList.add('rtl');
+    if (langToggleBtn) langToggleBtn.textContent = 'EN';
+  } else {
+    document.body.classList.remove('rtl');
+    if (langToggleBtn) langToggleBtn.textContent = 'AR';
+  }
 
-    // Translate elements with data-en and data-ar
-    document.querySelectorAll('[data-en]').forEach(el => {
-        const text = lang === 'ar' ? el.getAttribute('data-ar') : el.getAttribute('data-en');
-        if (text) el.innerText = text;
+  if (langToggleBtn) {
+    langToggleBtn.addEventListener('click', () => {
+      const isRtl = document.body.classList.toggle('rtl');
+      const newLang = isRtl ? 'ar' : 'en';
+      localStorage.setItem('lang', newLang);
+      langToggleBtn.textContent = isRtl ? 'EN' : 'AR';
+      location.reload();
     });
-
-    // Translate placeholders
-    document.querySelectorAll('[data-en-placeholder]').forEach(el => {
-        const placeholder = lang === 'ar' ? el.getAttribute('data-ar-placeholder') : el.getAttribute('data-en-placeholder');
-        if (placeholder) el.placeholder = placeholder;
-    });
+  }
 }
 
-// 2. Mobile Sidebar & Hamburger Handler
-function initMobileMenu() {
-    const hamburgerBtn = document.getElementById('hamburgerBtn');
-    const navMenu = document.getElementById('navMenu');
-    let navOverlay = document.getElementById('navOverlay');
-
-    // Create overlay if not present
-    if (!navOverlay) {
-        navOverlay = document.createElement('div');
-        navOverlay.id = 'navOverlay';
-        navOverlay.className = 'nav-overlay';
-        document.body.appendChild(navOverlay);
-    }
-
-    function toggleMenu(open) {
-        if (!navMenu) return;
-        const shouldOpen = open !== undefined ? open : !navMenu.classList.contains('active');
-        
-        if (shouldOpen) {
-            navMenu.classList.add('active');
-            if (hamburgerBtn) hamburgerBtn.classList.add('active');
-            navOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        } else {
-            navMenu.classList.remove('active');
-            if (hamburgerBtn) hamburgerBtn.classList.remove('active');
-            navOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
-    }
-
-    if (hamburgerBtn) {
-        hamburgerBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            toggleMenu();
-        });
-    }
-
-    if (navOverlay) {
-        navOverlay.addEventListener('click', () => toggleMenu(false));
-    }
-
-    // Dropdown toggle on mobile
-    const dropdowns = document.querySelectorAll('.nav-item.dropdown');
-    dropdowns.forEach(drop => {
-        const link = drop.querySelector('.nav-link');
-        if (link) {
-            link.addEventListener('click', (e) => {
-                if (window.innerWidth <= 768) {
-                    e.preventDefault();
-                    drop.classList.toggle('open');
-                }
-            });
-        }
-    });
+// 3. Update Cart Badge Counter
+function initCartBadge() {
+  const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
+  const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const badgeEl = document.getElementById('cartBadge');
+  if (badgeEl) {
+    badgeEl.textContent = totalCount;
+  }
 }
 
-// 3. Global Search
+// 4. Search Handler
 function initSearch() {
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
 
-    function executeSearch() {
-        if (!searchInput) return;
-        const query = searchInput.value.trim();
-        if (query) {
-            window.location.href = `products.html?search=${encodeURIComponent(query)}`;
-        }
+  const executeSearch = () => {
+    const query = searchInput ? searchInput.value.trim() : '';
+    if (query) {
+      window.location.href = `products.html?search=${encodeURIComponent(query)}`;
     }
+  };
 
-    if (searchBtn) searchBtn.addEventListener('click', executeSearch);
-    if (searchInput) {
-        searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') executeSearch();
-        });
-    }
+  if (searchBtn) searchBtn.addEventListener('click', executeSearch);
+  if (searchInput) {
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') executeSearch();
+    });
+  }
 }
 
-// 4. Cart Count Badge
-function updateCartCount() {
-    const badge = document.getElementById('cartCount');
-    if (!badge) return;
-    const cart = JSON.parse(localStorage.getItem('bigMuscleCart') || '[]');
-    const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    badge.innerText = totalItems;
+// 5. Product Modal Functions
+window.openProductModal = function(productId) {
+  const products = window.allLoadedProducts || [];
+  const product = products.find(p => p._id === productId);
+  if (!product) return;
+
+  const modal = document.getElementById('productModal');
+  if (!modal) return;
+
+  const lang = localStorage.getItem('lang') || 'en';
+  const images = (product.images && product.images.length > 0) ? product.images : [product.image || 'images/logo.png'];
+
+  const mainImg = document.getElementById('modalMainImg');
+  const thumbsContainer = document.getElementById('modalThumbnails');
+
+  if (mainImg) mainImg.src = images[0];
+  if (thumbsContainer) {
+    thumbsContainer.innerHTML = images.map((imgUrl, index) => `
+      <img src="${imgUrl}" class="thumb-img ${index === 0 ? 'active' : ''}" onclick="changeModalImage('${imgUrl}', this)">
+    `).join('');
+  }
+
+  document.getElementById('modalCategory').textContent = product.category || '';
+  document.getElementById('modalTitle').textContent = lang === 'ar' ? (product.nameAr || product.name) : product.name;
+  document.getElementById('modalPrice').textContent = `${product.price} EGP`;
+  document.getElementById('modalDescription').textContent = lang === 'ar' ? (product.descriptionAr || product.description || 'لا يوجد وصف متاح') : (product.description || 'No detailed description available.');
+
+  const cartBtn = document.getElementById('modalAddToCartBtn');
+  if (cartBtn) {
+    cartBtn.onclick = function(e) {
+      e.stopPropagation();
+      if (typeof addToCart === 'function') {
+        addToCart(product._id, product.name, product.nameAr, product.price, images[0]);
+      }
+      modal.classList.remove('active');
+    };
+  }
+
+  modal.classList.add('active');
+};
+
+window.closeProductModal = function() {
+  const modal = document.getElementById('productModal');
+  if (modal) modal.classList.remove('active');
+};
+
+window.changeModalImage = function(imgUrl, thumbEl) {
+  const mainImg = document.getElementById('modalMainImg');
+  if (mainImg) mainImg.src = imgUrl;
+  document.querySelectorAll('.thumb-img').forEach(el => el.classList.remove('active'));
+  if (thumbEl) thumbEl.classList.add('active');
+};
+
+function initModalCloseHandlers() {
+  const closeModalBtn = document.getElementById('closeModalBtn');
+  const modal = document.getElementById('productModal');
+
+  if (closeModalBtn) {
+    closeModalBtn.addEventListener('click', closeProductModal);
+  }
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeProductModal();
+    });
+  }
 }

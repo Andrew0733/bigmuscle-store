@@ -1,226 +1,89 @@
+/* ==========================================================================
+   BIG MUSCLE STORE - FETCH PRODUCTS & RENDER GRID
+   ========================================================================== */
+
+window.allLoadedProducts = [];
+
 document.addEventListener('DOMContentLoaded', () => {
-    fetchProducts();
-    createProductModalHTML();
+  fetchAndRenderProducts();
 });
 
-let allLoadedProducts = [];
+async function fetchAndRenderProducts() {
+  try {
+    const response = await fetch('/api/products');
+    if (!response.ok) throw new Error('Failed to fetch products');
+    const products = await response.json();
+    
+    window.allLoadedProducts = products;
 
-async function fetchProducts() {
-    // دعم الصفحة الرئيسية وصفحة المنتجات معاً
-    const productsGrid = document.getElementById('productsGrid') || 
-                         document.getElementById('featuredProductsGrid') || 
-                         document.querySelector('.products-grid');
+    // Check query params for filtering
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryParam = urlParams.get('category');
+    const searchParam = urlParams.get('search');
 
-    if (!productsGrid) return;
+    let filtered = products;
 
-    try {
-        const response = await fetch('/api/products');
-        if (!response.ok) throw new Error('Network response was not ok');
-        
-        const products = await response.json();
-        
-        if (!Array.isArray(products)) {
-            console.error('Expected array of products, got:', products);
-            return;
-        }
-
-        allLoadedProducts = products;
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const searchQuery = urlParams.get('search')?.toLowerCase().trim();
-        const categoryQuery = urlParams.get('category')?.toLowerCase().trim();
-
-        let filteredProducts = [...products];
-
-        if (searchQuery) {
-            filteredProducts = filteredProducts.filter(p => {
-                const nameEn = (p.name || '').toLowerCase();
-                const nameAr = (p.nameAr || '').toLowerCase();
-                const cat = (p.category || '').toLowerCase();
-                return nameEn.includes(searchQuery) || nameAr.includes(searchQuery) || cat.includes(searchQuery);
-            });
-        }
-
-        if (categoryQuery) {
-            filteredProducts = filteredProducts.filter(p => 
-                (p.category || '').toLowerCase() === categoryQuery
-            );
-        }
-
-        if (filteredProducts.length === 0) {
-            productsGrid.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; color: #888; padding: 40px; background: #1a1a1a; border-radius: 8px;">
-                    <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 10px; color: #E60000;"></i>
-                    <p style="font-size: 1.1rem;">لا توجد منتجات معروضة حالياً</p>
-                </div>`;
-            return;
-        }
-
-        renderProducts(filteredProducts, productsGrid);
-    } catch (error) {
-        console.error('Error fetching products:', error);
-        productsGrid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; color: #ff4d4d; padding: 20px;">
-                <p>تعذر تحميل المنتجات. يرجى إعادة تحديث الصفحة.</p>
-            </div>`;
+    if (categoryParam) {
+      const decodedCat = decodeURIComponent(categoryParam).toLowerCase().replace(/\s+/g, '');
+      filtered = filtered.filter(p => {
+        const pCat = (p.category || '').toLowerCase().replace(/\s+/g, '');
+        return pCat === decodedCat;
+      });
     }
-}
 
-function renderProducts(products, container) {
-    const currentLang = localStorage.getItem('lang') || 'en';
-
-    container.innerHTML = products.map(product => {
-        // حماية البيانات الناقصة من الكراش
-        const nameAr = product.nameAr || product.name || 'منتج بدون اسم';
-        const nameEn = product.name || product.nameAr || 'Unnamed Product';
-        const displayName = currentLang === 'ar' ? nameAr : nameEn;
-        
-        const price = product.price || 0;
-        const category = product.category || 'General';
-
-        // استخراج الصورة الرئيسية
-        let mainImg = 'https://via.placeholder.com/200';
-        if (Array.isArray(product.images) && product.images.length > 0 && product.images[0]) {
-            mainImg = product.images[0];
-        } else if (product.image) {
-            mainImg = product.image;
-        }
-
-        const safeNameForCart = String(displayName).replace(/'/g, "\\'").replace(/"/g, '&quot;');
-
-        return `
-            <div class="product-card" onclick="openProductModalById('${product._id}')" style="cursor: pointer;">
-                <div class="product-image">
-                    <img src="${mainImg}" alt="${safeNameForCart}" loading="lazy" onerror="this.src='https://via.placeholder.com/200'">
-                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${product._id}', '${safeNameForCart}', ${price}, '${mainImg}')">
-                        <i class="fa-solid fa-cart-shopping"></i> <span data-en="Add to Cart" data-ar="أضف للسلة">Add to Cart</span>
-                    </button>
-                </div>
-                <div class="product-info">
-                    <span class="product-category">${category}</span>
-                    <h3 class="product-title">${displayName}</h3>
-                    <div class="product-price">${price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}</div>
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-function openProductModalById(id) {
-    const product = allLoadedProducts.find(p => String(p._id) === String(id));
-    if (product) {
-        openProductModal(product);
+    if (searchParam) {
+      const query = searchParam.toLowerCase();
+      filtered = filtered.filter(p => 
+        (p.name && p.name.toLowerCase().includes(query)) ||
+        (p.nameAr && p.nameAr.toLowerCase().includes(query)) ||
+        (p.category && p.category.toLowerCase().includes(query))
+      );
     }
+
+    renderProductsGrid(filtered);
+  } catch (error) {
+    console.error('Error fetching products:', error);
+  }
 }
 
-// Modal Generation & Logic
-// Modal Generation & Logic
-function createProductModalHTML() {
-    if (document.getElementById('productDetailModal')) return;
+function renderProductsGrid(products) {
+  const gridContainer = document.getElementById('productsGrid') || document.getElementById('featuredProductsGrid');
+  if (!gridContainer) return;
 
-    const modalHTML = `
-      <div class="product-modal-backdrop" id="productDetailModal" onclick="closeProductModal(event)">
-        <div class="product-modal-content" onclick="event.stopPropagation()">
-          <button class="product-modal-close" onclick="closeProductModal()"><i class="fa-solid fa-xmark"></i></button>
-          
-          <div class="product-modal-gallery">
-            <div class="product-modal-main-wrap">
-              <img id="modalMainImg" src="" class="product-modal-main-img" alt="Product Image">
-            </div>
-            <div class="product-modal-thumbs" id="modalThumbs"></div>
-          </div>
+  if (products.length === 0) {
+    gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #a0a0a0;">No products found</div>`;
+    return;
+  }
 
-          <div class="product-modal-info">
-            <span class="product-modal-cat" id="modalCat">CATEGORY</span>
-            <h2 class="product-modal-title" id="modalTitle">Product Title</h2>
-            <div class="product-modal-price" id="modalPrice">0 EGP</div>
-            <div class="product-modal-desc" id="modalDesc">No details available.</div>
-            
-            <button class="product-modal-add-btn" id="modalAddBtn">
-              <i class="fa-solid fa-cart-shopping"></i>
-              <span data-en="ADD TO CART" data-ar="أضف إلى السلة">ADD TO CART</span>
-            </button>
-          </div>
+  const lang = localStorage.getItem('lang') || 'en';
+
+  gridContainer.innerHTML = products.map(product => {
+    const title = lang === 'ar' ? (product.nameAr || product.name) : product.name;
+    const mainImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'images/logo.png');
+
+    return `
+      <div class="product-card" onclick="openProductModal('${product._id}')">
+        <div class="product-image">
+          <img src="${mainImg}" alt="${title}">
+          <button class="add-to-cart-btn" onclick="handleCardAddToCart(event, '${product._id}')">
+            <i class="fas fa-shopping-cart"></i> Add to Cart
+          </button>
+        </div>
+        <div class="product-info">
+          <span class="product-category">${product.category || ''}</span>
+          <h3 class="product-title">${title}</h3>
+          <div class="product-price">${product.price} EGP</div>
         </div>
       </div>
     `;
-    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }).join('');
 }
 
-function openProductModal(product) {
-    const currentLang = localStorage.getItem('lang') || 'en';
-
-    const modal = document.getElementById('productDetailModal');
-    const mainImg = document.getElementById('modalMainImg');
-    const thumbsContainer = document.getElementById('modalThumbs');
-    const cat = document.getElementById('modalCat');
-    const title = document.getElementById('modalTitle');
-    const price = document.getElementById('modalPrice');
-    const desc = document.getElementById('modalDesc');
-    const addBtn = document.getElementById('modalAddBtn');
-
-    const displayName = currentLang === 'ar' ? (product.nameAr || product.name) : (product.name || product.nameAr);
-    const descriptionText = currentLang === 'ar' ? (product.descriptionAr || product.description) : (product.description || product.descriptionAr);
-    
-    // إعداد واستخراج كل الصور بدون تكرار
-    let imageList = [];
-    if (Array.isArray(product.images) && product.images.length > 0) {
-        imageList = product.images.filter(img => img && typeof img === 'string');
-    }
-    if (imageList.length === 0 && product.image) {
-        imageList = [product.image];
-    }
-    // إزالة الصور المكررة إن وجدت
-    imageList = Array.from(new Set(imageList));
-
-    const firstImg = imageList[0] || 'https://via.placeholder.com/300';
-    mainImg.src = firstImg;
-
-    // بناء المصغرات وتفعيل إمكانية الضغط والتبديل المباشر
-    thumbsContainer.innerHTML = '';
-    if (imageList.length > 1) {
-        imageList.forEach((imgUrl, index) => {
-            const thumb = document.createElement('img');
-            thumb.src = imgUrl;
-            thumb.alt = `Thumbnail ${index + 1}`;
-            thumb.className = `product-modal-thumb ${index === 0 ? 'active' : ''}`;
-            
-            thumb.addEventListener('click', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                
-                // تأثير تبديل الصورة بسلاسة
-                mainImg.style.opacity = '0.3';
-                setTimeout(() => {
-                    mainImg.src = imgUrl;
-                    mainImg.style.opacity = '1';
-                }, 120);
-
-                const allThumbs = thumbsContainer.querySelectorAll('.product-modal-thumb');
-                allThumbs.forEach(t => t.classList.remove('active'));
-                thumb.classList.add('active');
-            });
-
-            thumbsContainer.appendChild(thumb);
-        });
-    }
-
-    cat.innerText = product.category || 'SUPPLEMENT';
-    title.innerText = displayName;
-    price.innerText = `${product.price || 0} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}`;
-    desc.innerText = descriptionText || (currentLang === 'ar' ? 'لا توجد تفاصيل إضافية للمنتج.' : 'No additional details available for this product.');
-
-    addBtn.onclick = () => {
-        addToCart(product._id, displayName, product.price || 0, firstImg);
-        closeProductModal();
-    };
-
-    if (modal) modal.classList.add('active');
-}
-
-function closeProductModal(e) {
-    if (!e || e.target.id === 'productDetailModal' || e.target.closest('.product-modal-close')) {
-        const modal = document.getElementById('productDetailModal');
-        if (modal) modal.classList.remove('active');
-    }
-}
+window.handleCardAddToCart = function(e, productId) {
+  e.stopPropagation(); // Prevents opening modal on button click
+  const product = window.allLoadedProducts.find(p => p._id === productId);
+  if (product && typeof addToCart === 'function') {
+    const mainImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'images/logo.png');
+    addToCart(product._id, product.name, product.nameAr, product.price, mainImg);
+  }
+};

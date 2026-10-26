@@ -12,7 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
   
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="css/style.css?v=6.0">
+  <link rel="stylesheet" href="css/style.css?v=6.1">
 </head>
 <body>
 
@@ -227,5 +227,29 @@
       });
     }
   </script>
+<!-- Product Detail Modal -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal-content">
+    <button class="modal-close-btn" id="closeModalBtn">&times;</button>
+    <div class="modal-gallery">
+      <div class="main-image-box">
+        <img id="modalMainImg" src="" alt="Product Detail">
+      </div>
+      <div class="thumbnails-row" id="modalThumbnails">
+        <!-- Thumbnails dynamic -->
+      </div>
+    </div>
+    <div class="modal-details">
+      <span class="product-category" id="modalCategory">Category</span>
+      <h2 id="modalTitle" style="color: #fff; font-family: var(--font-heading); font-size: 1.4rem;">Product Title</h2>
+      <div class="product-price" id="modalPrice" style="font-size: 1.3rem; font-weight: 800; color: var(--primary-color);">0 EGP</div>
+      <p id="modalDescription" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 10px 0;">Description...</p>
+      <button id="modalAddToCartBtn" class="add-to-cart-btn" style="position: static !important; width: 100% !important; height: 42px !important; transform: none !important; opacity: 1 !important; font-size: 0.95rem !important; border-radius: 8px !important;">
+        <i class="fas fa-shopping-cart"></i> <span>Add to Cart</span>
+      </button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
