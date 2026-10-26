@@ -19,8 +19,32 @@
                 
                 <input type="text" id="name" placeholder="Full Name | الاسم بالكامل" required>
                 <input type="tel" id="phone" placeholder="Phone Number | رقم الهاتف" required>
+                <div class="form-group">
+  <label>المنطقة / المحافظة *</label>
+  <select id="customerRegion" required onchange="updateOrderTotal()">
+    <option value="">اختر المنطقة...</option>
+    <option value="50">القاهرة / الجيزة / وجه بحري — 90 ج.م</option>
+    <option value="90">الصعيد / وجه قبلي — 120 ج.م</option>
+    <option value="120">سيناء / البحر الأحمر / مطروح — 130 ج.م</option>
+  </select>
+</div>
                 <input type="text" id="address" placeholder="Detailed Address | العنوان بالتفصيل" required>
                 <textarea id="notes" placeholder="Notes (Optional) | ملاحظات (اختياري)"></textarea>
+                <div class="order-summary-box" style="background:#1a1a1a; border:1px solid #262626; border-radius:10px; padding:15px; margin:20px 0;">
+  <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+    <span>سعر المنتجات:</span>
+    <strong id="subtotalText">0 EGP</strong>
+  </div>
+  <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+    <span>سعر التوصيل:</span>
+    <strong id="shippingText">اختر المنطقة</strong>
+  </div>
+  <hr style="border-color:#333; margin:10px 0;">
+  <div style="display:flex; justify-content:space-between; font-size:1.2rem; color:#E60000;">
+    <span>الإجمالي:</span>
+    <strong id="totalText">0 EGP</strong>
+  </div>
+</div>
                 
                 <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;" data-ar="تأكيد الطلب (الدفع عند الاستلام)" data-en="Confirm Order (Cash on Delivery)">Confirm Order (Cash on Delivery)</button>
             </form>
@@ -69,5 +93,59 @@
         }
     });
 </script>
+
+
+<script>
+  // احسب مجموع المنتجات من السلة
+  const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
+  let subtotal = 0;
+  cart.forEach(item => {
+    subtotal += (Number(item.price) || 0) * (Number(item.quantity) || 1);
+  });
+
+  // عرض سعر المنتجات
+  document.getElementById('subtotalText').textContent = subtotal + ' EGP';
+  document.getElementById('totalText').textContent = subtotal + ' EGP';
+
+  // تحديث الإجمالي لما يختار المنطقة
+  function updateOrderTotal() {
+    const regionSelect = document.getElementById('customerRegion');
+    const shipping = Number(regionSelect.value) || 0;
+
+    if (!regionSelect.value) {
+      document.getElementById('shippingText').textContent = 'اختر المنطقة';
+      document.getElementById('totalText').textContent = subtotal + ' EGP';
+      return;
+    }
+
+    document.getElementById('shippingText').textContent = shipping + ' EGP';
+    document.getElementById('totalText').textContent = (subtotal + shipping) + ' EGP';
+  }
+
+  // قبل تأكيد الطلب: تأكد إن المنطقة متختارة
+  const checkoutForm = document.getElementById('checkoutForm') || document.querySelector('form');
+  if (checkoutForm) {
+    checkoutForm.addEventListener('submit', function (e) {
+      const regionSelect = document.getElementById('customerRegion');
+      if (!regionSelect || !regionSelect.value) {
+        e.preventDefault();
+        alert('من فضلك اختر المنطقة لتحديد سعر التوصيل');
+        return;
+      }
+
+      // تقدر تخزن سعر التوصيل والإجمالي مع الطلب
+      const shipping = Number(regionSelect.value) || 0;
+      const totalWithShipping = subtotal + shipping;
+
+      // مثال: ضيفهم في الطلب قبل الإرسال
+      // orderData.shipping = shipping;
+      // orderData.totalAmount = totalWithShipping;
+    });
+  }
+</script>
+
+
+
+
 </body>
 </html>
