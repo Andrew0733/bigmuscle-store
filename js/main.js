@@ -3,7 +3,7 @@
    ========================================================================== */
 
 // Global Mobile Menu Toggle
-window.toggleMobileMenu = function() {
+/*window.toggleMobileMenu = function() {
   const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
   if (navMenu) {
     navMenu.classList.toggle('active');
@@ -180,4 +180,90 @@ window.changeModalImage = function(imgUrl, thumbEl) {
   if (mainImg) mainImg.src = imgUrl;
   document.querySelectorAll('.thumb-img').forEach(el => el.classList.remove('active'));
   if (thumbEl) thumbEl.classList.add('active');
-};
+};*/
+
+
+/* ==========================================================================
+   BIG MUSCLE STORE - MAIN JS (Step 1: Hamburger Menu Fix)
+   ========================================================================== */
+
+document.addEventListener('DOMContentLoaded', () => {
+  initHamburgerMenu();
+  initLangToggle();
+  initCartBadge();
+  initSearch();
+});
+
+// Mobile Hamburger Menu Toggle
+function initHamburgerMenu() {
+  const hamburgerBtn = document.getElementById('hamburgerBtn') || document.querySelector('.hamburger-btn');
+  const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
+
+  if (hamburgerBtn && navMenu) {
+    hamburgerBtn.onclick = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      navMenu.classList.toggle('active');
+    };
+
+    document.addEventListener('click', (e) => {
+      if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+        navMenu.classList.remove('active');
+      }
+    });
+  }
+}
+
+// Language Toggle (Arabic / English)
+function initLangToggle() {
+  const langToggleBtn = document.getElementById('langToggle');
+  const currentLang = localStorage.getItem('lang') || 'en';
+  
+  if (currentLang === 'ar') {
+    document.body.classList.add('rtl');
+    if (langToggleBtn) langToggleBtn.textContent = 'EN';
+  } else {
+    document.body.classList.remove('rtl');
+    if (langToggleBtn) langToggleBtn.textContent = 'AR';
+  }
+
+  if (langToggleBtn) {
+    langToggleBtn.onclick = function() {
+      const isRtl = document.body.classList.toggle('rtl');
+      const newLang = isRtl ? 'ar' : 'en';
+      localStorage.setItem('lang', newLang);
+      langToggleBtn.textContent = isRtl ? 'EN' : 'AR';
+      location.reload();
+    };
+  }
+}
+
+// Update Cart Counter Badge
+function initCartBadge() {
+  const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
+  const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const badgeEl = document.getElementById('cartBadge');
+  if (badgeEl) {
+    badgeEl.textContent = totalCount;
+  }
+}
+
+// Search Handler
+function initSearch() {
+  const searchInput = document.getElementById('searchInput');
+  const searchBtn = document.getElementById('searchBtn');
+
+  const executeSearch = () => {
+    const query = searchInput ? searchInput.value.trim() : '';
+    if (query) {
+      window.location.href = `products.html?search=${encodeURIComponent(query)}`;
+    }
+  };
+
+  if (searchBtn) searchBtn.onclick = executeSearch;
+  if (searchInput) {
+    searchInput.onkeypress = function(e) {
+      if (e.key === 'Enter') executeSearch();
+    };
+  }
+}
