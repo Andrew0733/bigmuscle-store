@@ -1,73 +1,239 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Checkout | Big Muscle</title>
-    <!-- حط لينكات الـ CSS هنا زي صفحة cart.html -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/cart.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Checkout - Big Muscle</title>
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css?v=12.0">
 </head>
 <body>
-    <!-- (Navbar هنا) -->
 
-    <section class="section checkout-section">
-        <h2 class="section-title" data-ar="إتمام الطلب" data-en="CHECKOUT">CHECKOUT</h2>
+  <!-- NAVBAR HEADER -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="Big Muscle">
+      </a>
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search..." autocomplete="off">
+        <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
+      </div>
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html">All Products</a></li>
+        <li><a href="#" class="active">Checkout</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="lang-btn" id="langToggle">AR</button>
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-badge" id="cartBadge">0</span>
+        </a>
+        <button class="hamburger-btn" id="hamburgerBtn">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CHECKOUT SECTION -->
+  <main class="main-content">
+    <div class="container">
+      <h1 class="section-title">Secure Checkout</h1>
+      
+      <div class="checkout-wrapper">
         
-        <div class="checkout-container">
-            <form id="checkout-form" class="checkout-form">
-                <h3 data-ar="بيانات التوصيل" data-en="Delivery Details">Delivery Details</h3>
-                
-                <input type="text" id="name" placeholder="Full Name | الاسم بالكامل" required>
-                <input type="tel" id="phone" placeholder="Phone Number | رقم الهاتف" required>
-                <input type="text" id="address" placeholder="Detailed Address | العنوان بالتفصيل" required>
-                <textarea id="notes" placeholder="Notes (Optional) | ملاحظات (اختياري)"></textarea>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;" data-ar="تأكيد الطلب (الدفع عند الاستلام)" data-en="Confirm Order (Cash on Delivery)">Confirm Order (Cash on Delivery)</button>
-            </form>
+        <!-- FORM COLUMN -->
+        <div class="checkout-col">
+          <h2>Shipping Details</h2>
+          <form id="checkoutForm">
+            <div class="form-group">
+              <label>Full Name / الاسم بالكامل *</label>
+              <input type="text" id="custName" required placeholder="Ahmed Mohamed">
+            </div>
+            
+            <div class="form-group">
+              <label>Phone Number / رقم الهاتف *</label>
+              <input type="tel" id="custPhone" required placeholder="01xxxxxxxxx">
+            </div>
+
+            <div class="form-group">
+              <label>Governorate / المحافظة *</label>
+              <select id="custGov" required onchange="calculateShipping()">
+                <option value="">اختر المحافظة / Select...</option>
+                <option value="cairo">القاهرة والجيزة - 50 ج.م</option>
+                <option value="alex">الإسكندرية - 60 ج.م</option>
+                <option value="delta">محافظات الدلتا والقناة - 70 ج.م</option>
+                <option value="upper">صعيد مصر - 90 ج.م</option>
+                <option value="remote">البحر الأحمر وسيناء ومطروح - 120 ج.م</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Detailed Address / العنوان بالتفصيل *</label>
+              <textarea id="custAddress" rows="3" required placeholder="اسم الشارع، رقم العمارة، رقم الشقة..."></textarea>
+            </div>
+
+            <button type="submit" class="place-order-btn">
+              <i class="fas fa-check-circle"></i> Place Order (Cash on Delivery)
+            </button>
+          </form>
         </div>
-    </section>
 
-    <!-- (Footer هنا) -->
+        <!-- SUMMARY COLUMN -->
+        <div class="checkout-col">
+          <h2>Order Summary</h2>
+          
+          <div class="summary-item">
+            <span>Subtotal (المنتجات):</span>
+            <span id="summarySubtotal" style="font-weight:700;">0 EGP</span>
+          </div>
 
-    <script src="js/cart.js"></script>
-    <script src="js/main.js"></script>
-    <script>
-    document.getElementById('checkout-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        if(cart.length === 0) {
-            alert("سلتك فارغة! / Your cart is empty!");
-            return;
-        }
+          <div class="summary-item">
+            <span>Shipping & Weight (الشحن والوزن):</span>
+            <span id="summaryShipping" style="color:#a0a0a0;">Select Governorate</span>
+          </div>
 
-        // تجميع بيانات العميل والسلة
-        const orderData = {
-            customerName: document.getElementById('name').value,
-            phone: document.getElementById('phone').value,
-            address: document.getElementById('address').value,
-            notes: document.getElementById('notes').value,
-            items: cart,
-            totalAmount: cart.reduce((total, item) => total + (item.price * item.quantity), 0)
-        };
+          <div class="summary-item summary-total">
+            <span>Total (الإجمالي):</span>
+            <span id="summaryTotal">0 EGP</span>
+          </div>
 
-        try {
-            // إرسال الطلب لقاعدة البيانات
-            const response = await fetch('/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
-            });
+          <div style="margin-top:20px; font-size:0.85rem; color:#a0a0a0; line-height:1.5;">
+            <i class="fas fa-info-circle" style="color:#E60000;"></i> 
+            يتم حساب تكلفة الشحن الأساسية بناءً على المحافظة، ويضاف <strong>15 ج.م</strong> لوزن كل منتج إضافي في السلة.
+          </div>
+        </div>
 
-            if(response.ok) {
-                alert("تم تأكيد الطلب بنجاح! سنتواصل معك قريباً. / Order placed successfully!");
-                localStorage.removeItem('bigMuscleCart'); // تفريغ السلة
-                window.location.href = 'index.html'; // الرجوع للرئيسية
-            }
-        } catch (error) {
-            alert("حدث خطأ في الإتصال بالسيرفر!");
-            console.error(error);
-        }
+      </div>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-col">
+        <img src="images/logo.png" alt="Big Muscle Logo" style="height:50px; margin-bottom:15px;">
+        <p>Your ultimate destination for premium sports supplements.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Contact Us</h3>
+        <p><i class="fas fa-phone"></i> 01272069590</p>
+        <p><i class="fas fa-truck"></i> Cash on Delivery</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2024 Big Muscle. All Rights Reserved.
+    </div>
+  </footer>
+
+  <!-- JS LOGIC FOR CHECKOUT -->
+  <script src="js/main.js"></script>
+  <script>
+    // Shipping Base Rates
+    const shippingRates = {
+      'cairo': 50,
+      'alex': 60,
+      'delta': 70,
+      'upper': 90,
+      'remote': 120
+    };
+
+    let cartSubtotal = 0;
+    let totalItemsCount = 0;
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
+      if (cart.length === 0) {
+        alert("Your cart is empty! / السلة فارغة");
+        window.location.href = "products.html";
+        return;
+      }
+
+      // Calculate Subtotal & Total Items (for weight calculation)
+      cart.forEach(item => {
+        cartSubtotal += (item.price * item.quantity);
+        totalItemsCount += item.quantity;
+      });
+
+      document.getElementById('summarySubtotal').textContent = cartSubtotal + " EGP";
     });
-</script>
+
+    // Dynamic Shipping Calculator
+    function calculateShipping() {
+      const govValue = document.getElementById('custGov').value;
+      let shippingCost = 0;
+
+      if (govValue && shippingRates[govValue]) {
+        let baseRate = shippingRates[govValue];
+        
+        // Weight Surcharge: +15 EGP for every item beyond the first one
+        let weightSurcharge = totalItemsCount > 1 ? (totalItemsCount - 1) * 15 : 0;
+        
+        shippingCost = baseRate + weightSurcharge;
+        
+        document.getElementById('summaryShipping').textContent = shippingCost + " EGP";
+        document.getElementById('summaryShipping').style.color = "#ffffff";
+      } else {
+        document.getElementById('summaryShipping').textContent = "Select Governorate";
+        document.getElementById('summaryShipping').style.color = "#a0a0a0";
+      }
+
+      // Update Grand Total
+      const grandTotal = cartSubtotal + shippingCost;
+      document.getElementById('summaryTotal').textContent = grandTotal + " EGP";
+    }
+
+    // Handle Form Submission (Send to API)
+    document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
+      const govValue = document.getElementById('custGov').value;
+      if (!govValue) return alert("Please select a Governorate.");
+
+      const submitBtn = document.querySelector('.place-order-btn');
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+      submitBtn.disabled = true;
+
+      const baseRate = shippingRates[govValue];
+      const weightSurcharge = totalItemsCount > 1 ? (totalItemsCount - 1) * 15 : 0;
+      const finalShippingCost = baseRate + weightSurcharge;
+      const grandTotal = cartSubtotal + finalShippingCost;
+
+      const orderData = {
+        customerName: document.getElementById('custName').value,
+        customerPhone: document.getElementById('custPhone').value,
+        customerAddress: document.getElementById('custAddress').value + " - " + document.getElementById('custGov').options[document.getElementById('custGov').selectedIndex].text,
+        cartItems: cart,
+        totalAmount: grandTotal,
+        status: "Pending"
+      };
+
+      try {
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+
+        if (response.ok) {
+          localStorage.removeItem('bigmuscle_cart'); // Clear cart
+          window.location.href = `https://wa.me/201272069590?text=Hello, I just placed a new order! Total: ${grandTotal} EGP. Please check the admin panel.`;
+        } else {
+          alert('Failed to place order. Please try again or contact support.');
+          submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+          submitBtn.disabled = false;
+        }
+      } catch (error) {
+        console.error(error);
+        alert('Error connecting to server.');
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>
