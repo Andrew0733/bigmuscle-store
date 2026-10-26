@@ -986,3 +986,97 @@ body.rtl .product-modal-desc {
     font-size: 1rem !important;
   }
 }
+
+/* ==========================================================================
+   FIX MODAL & PRODUCTS PAGE DISPLAY
+   ========================================================================== */
+
+/* 1. Hide Product Modal Completely Until Clicked */
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 999999 !important;
+  display: none !important; /* HIDES IT FROM BOTTOM OF PAGE */
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 15px !important;
+}
+
+/* Show Modal Only When Active */
+.modal-overlay.active {
+  display: flex !important;
+}
+
+/* Modal Content Box */
+.modal-content {
+  background: #141414 !important;
+  border: 1px solid #262626 !important;
+  border-radius: 16px !important;
+  width: 100% !important;
+  max-width: 750px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  position: relative !important;
+  padding: 25px !important;
+  display: flex !important;
+  gap: 20px !important;
+}
+
+.modal-close-btn {
+  position: absolute !important;
+  top: 15px !important;
+  right: 15px !important;
+  background: none !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 1.8rem !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+}
+
+body.rtl .modal-close-btn {
+  right: auto !important;
+  left: 15px !important;
+}
+
+.modal-gallery {
+  width: 45% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.main-image-box {
+  width: 100% !important;
+  height: 220px !important;
+  background: #ffffff !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px !important;
+}
+
+.main-image-box img {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+}
+
+.modal-details {
+  width: 55% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+}
+
+/* 2. Fix Product Cards Padding below Header */
+.container {
+  padding-top: 30px !important;
+}
