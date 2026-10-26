@@ -1,19 +1,17 @@
 /* ==========================================================================
-   BIG MUSCLE STORE - FETCH PRODUCTS & RENDER GRID (v7.0 Safe Loader)
+   BIG MUSCLE STORE - FETCH PRODUCTS & RENDER GRID (v8.0 Robust Click Handling)
    ========================================================================== */
 
 window.allLoadedProducts = [];
 
-// Guarantee execution regardless of when script is loaded
-function safeInitProducts() {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', fetchAndRenderProducts);
-  } else {
-    fetchAndRenderProducts();
-  }
-}
+document.addEventListener('DOMContentLoaded', () => {
+  fetchAndRenderProducts();
+});
 
-safeInitProducts();
+// Fallback execution if DOMContentLoaded already fired
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  fetchAndRenderProducts();
+}
 
 async function fetchAndRenderProducts() {
   const gridContainer = document.getElementById('productsGrid') 
@@ -22,15 +20,13 @@ async function fetchAndRenderProducts() {
 
   if (!gridContainer) return;
 
-  gridContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #E60000; font-size: 1.1rem;"><i class="fas fa-spinner fa-spin"></i> Loading products...</div>`;
-
   try {
     let response = await fetch('/api/products');
     if (!response.ok) {
       response = await fetch('https://bigmuscle-api.vercel.app/api/products');
     }
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    
+    if (!response.ok) throw new Error('Failed to load products');
+
     const products = await response.json();
     window.allLoadedProducts = products;
 
@@ -85,10 +81,10 @@ function renderProductsGrid(container, products) {
     const mainImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'images/logo.png');
 
     return `
-      <div class="product-card" onclick="window.openProductModal('${product._id}')">
+      <div class="product-card" data-id="${product._id}">
         <div class="product-image">
           <img src="${mainImg}" alt="${title}">
-          <button class="add-to-cart-btn" onclick="window.handleCardAddToCart(event, '${product._id}')">
+          <button class="add-to-cart-btn" data-cart-id="${product._id}">
             <i class="fas fa-shopping-cart"></i> Add to Cart
           </button>
         </div>
@@ -100,13 +96,27 @@ function renderProductsGrid(container, products) {
       </div>
     `;
   }).join('');
-}
 
-window.handleCardAddToCart = function(e, productId) {
-  if (e) e.stopPropagation();
-  const product = (window.allLoadedProducts || []).find(p => String(p._id) === String(productId));
-  if (product && typeof addToCart === 'function') {
-    const mainImg = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'images/logo.png');
-    addToCart(product._id, product.name, product.nameAr, product.price, mainImg);
-  }
-};
+  // Event Delegation for Cards & Add-to-Cart Buttons
+  container.onclick = function(e) {
+    const cartBtn = e.target.closest('[data-cart-id]');
+    if (cartBtn) {
+      e.stopPropagation();
+      const pId = cartBtn.getAttribute('data-cart-id');
+      const product = window.allLoadedProducts.find(p => String(p._id) === String(pId));
+      if (product && typeof addToCart === 'function') {
+        const img = (product.images && product.images.length > 0) ? product.images[0] : (product.image || 'images/logo.png');
+        addToCart(product._id, product.name, product.nameAr, product.price, img);
+      }
+      return;
+    }
+
+    const card = e.target.closest('.product-card');
+    if (card) {
+      const pId = card.getAttribute('data-id');
+      if (pId && typeof window.openProductModal === 'function') {
+        window.openProductModal(pId);
+      }
+    }
+  };
+}

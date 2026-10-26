@@ -1,48 +1,43 @@
 /* ==========================================================================
-   BIG MUSCLE STORE - MAIN APPLICATION LOGIC (v7.0)
+   BIG MUSCLE STORE - MAIN APPLICATION LOGIC (v8.0 Dynamic Modal & Nav Fix)
    ========================================================================== */
 
-function safeInitMain() {
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initApp);
-  } else {
-    initApp();
+// Global Mobile Menu Toggle
+window.toggleMobileMenu = function() {
+  const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
+  if (navMenu) {
+    navMenu.classList.toggle('active');
   }
-}
+};
 
-safeInitMain();
-
-function initApp() {
+document.addEventListener('DOMContentLoaded', () => {
   initHamburgerMenu();
   initLangToggle();
   initCartBadge();
-  initModalCloseHandlers();
   initSearch();
-}
+  ensureModalExists();
+});
 
-// 1. Mobile Hamburger Menu Toggle
 function initHamburgerMenu() {
-  const hamburgerBtn = document.getElementById('hamburgerBtn') 
-                    || document.querySelector('.hamburger-btn');
-  const navMenu = document.getElementById('navMenu') 
-               || document.querySelector('.nav-menu');
+  const hamburgerBtn = document.getElementById('hamburgerBtn') || document.querySelector('.hamburger-btn');
+  const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
 
-  if (!hamburgerBtn || !navMenu) return;
+  if (hamburgerBtn) {
+    hamburgerBtn.onclick = function(e) {
+      e.stopPropagation();
+      window.toggleMobileMenu();
+    };
+  }
 
-  hamburgerBtn.onclick = function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    navMenu.classList.toggle('active');
-  };
-
-  document.onclick = function(e) {
-    if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-      navMenu.classList.remove('active');
+  document.addEventListener('click', (e) => {
+    if (navMenu && navMenu.classList.contains('active')) {
+      if (!navMenu.contains(e.target) && hamburgerBtn && !hamburgerBtn.contains(e.target)) {
+        navMenu.classList.remove('active');
+      }
     }
-  };
+  });
 }
 
-// 2. Language Toggle
 function initLangToggle() {
   const langToggleBtn = document.getElementById('langToggle');
   const currentLang = localStorage.getItem('lang') || 'en';
@@ -66,7 +61,6 @@ function initLangToggle() {
   }
 }
 
-// 3. Update Cart Badge Counter
 function initCartBadge() {
   const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
   const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
@@ -76,7 +70,6 @@ function initCartBadge() {
   }
 }
 
-// 4. Search Handler
 function initSearch() {
   const searchInput = document.getElementById('searchInput');
   const searchBtn = document.getElementById('searchBtn');
@@ -96,8 +89,44 @@ function initSearch() {
   }
 }
 
-// 5. Product Modal Global Functions
+// Ensures the Modal HTML element exists dynamically on any page
+function ensureModalExists() {
+  if (document.getElementById('productModal')) return;
+
+  const modalHtml = `
+    <div class="modal-overlay" id="productModal">
+      <div class="modal-content">
+        <button class="modal-close-btn" onclick="window.closeProductModal()">&times;</button>
+        <div class="modal-gallery">
+          <div class="main-image-box">
+            <img id="modalMainImg" src="" alt="Product Detail">
+          </div>
+          <div class="thumbnails-row" id="modalThumbnails"></div>
+        </div>
+        <div class="modal-details">
+          <span class="product-category" id="modalCategory">Category</span>
+          <h2 id="modalTitle" style="color: #fff; font-family: var(--font-heading); font-size: 1.4rem;">Product Title</h2>
+          <div class="product-price" id="modalPrice" style="font-size: 1.3rem; font-weight: 800; color: var(--primary-color);">0 EGP</div>
+          <p id="modalDescription" style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin: 10px 0;">Description...</p>
+          <button id="modalAddToCartBtn" class="add-to-cart-btn" style="position: static !important; width: 100% !important; height: 42px !important; transform: none !important; opacity: 1 !important; font-size: 0.95rem !important; border-radius: 8px !important;">
+            <i class="fas fa-shopping-cart"></i> <span>Add to Cart</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+  const modal = document.getElementById('productModal');
+  modal.onclick = function(e) {
+    if (e.target === modal) window.closeProductModal();
+  };
+}
+
+// Global Product Modal Functions
 window.openProductModal = function(productId) {
+  ensureModalExists();
+
   const products = window.allLoadedProducts || [];
   const product = products.find(p => String(p._id) === String(productId));
   if (!product) return;
@@ -152,15 +181,3 @@ window.changeModalImage = function(imgUrl, thumbEl) {
   document.querySelectorAll('.thumb-img').forEach(el => el.classList.remove('active'));
   if (thumbEl) thumbEl.classList.add('active');
 };
-
-function initModalCloseHandlers() {
-  const closeModalBtn = document.getElementById('closeModalBtn');
-  const modal = document.getElementById('productModal');
-
-  if (closeModalBtn) closeModalBtn.onclick = closeProductModal;
-  if (modal) {
-    modal.onclick = function(e) {
-      if (e.target === modal) closeProductModal();
-    };
-  }
-}
