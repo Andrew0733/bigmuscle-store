@@ -987,232 +987,98 @@ body.rtl .product-modal-desc {
     font-size: 1rem !important;
   }
 }
-/* =========================================
-   FIX PRODUCT MODAL (PERFECT MOBILE & DESKTOP)
-   ========================================= */
-.product-modal-backdrop {
-  position: fixed;
-  top: 0; left: 0; width: 100%; height: 100%;
-  background: rgba(0, 0, 0, 0.88);
-  backdrop-filter: blur(8px);
-  z-index: 99999;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  padding: 15px;
+
+/* ==========================================================================
+   FIX MODAL & PRODUCTS PAGE DISPLAY
+   ========================================================================== */
+
+/* 1. Hide Product Modal Completely Until Clicked */
+
+.modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background: rgba(0, 0, 0, 0.85) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 999999 !important;
+  display: none !important; /* HIDES IT FROM BOTTOM OF PAGE */
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 15px !important;
 }
 
-.product-modal-backdrop.active {
+/* Show Modal Only When Active */
+.modal-overlay.active {
   display: flex !important;
-  animation: fadeIn 0.25s ease;
 }
 
-.product-modal-content {
-  background: #1a1a1a;
-  border: 1px solid var(--primary-red);
-  border-radius: 14px;
-  width: 100%;
-  max-width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  box-shadow: 0 10px 35px rgba(230, 0, 0, 0.35);
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 25px;
-  padding: 25px;
+/* Modal Content Box */
+.modal-content {
+  background: #141414 !important;
+  border: 1px solid #262626 !important;
+  border-radius: 16px !important;
+  width: 100% !important;
+  max-width: 750px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  position: relative !important;
+  padding: 25px !important;
+  display: flex !important;
+  gap: 20px !important;
 }
 
-.product-modal-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: #222;
-  color: #fff;
-  border: 1px solid #444;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s;
-  z-index: 10;
+.modal-close-btn {
+  position: absolute !important;
+  top: 15px !important;
+  right: 15px !important;
+  background: none !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 1.8rem !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
 }
 
-body.rtl .product-modal-close {
-  right: auto;
-  left: 12px;
+body.rtl .modal-close-btn {
+  right: auto !important;
+  left: 15px !important;
 }
 
-.product-modal-close:hover {
-  background: var(--primary-red);
-  border-color: var(--primary-red);
+.modal-gallery {
+  width: 45% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
 }
 
-.product-modal-gallery {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  width: 100%;
+.main-image-box {
+  width: 100% !important;
+  height: 220px !important;
+  background: #ffffff !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px !important;
 }
 
-.product-modal-main-wrap {
-  width: 100%;
-  height: 300px;
-  background: #0d0d0d;
-  border: 1px solid #333;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 15px;
-  overflow: hidden;
-}
-
-.product-modal-main-img {
+.main-image-box img {
   max-width: 100% !important;
   max-height: 100% !important;
-  width: auto !important;
-  height: auto !important;
   object-fit: contain !important;
-  display: block;
 }
 
-.product-modal-thumbs {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 5px;
-  width: 100%;
+.modal-details {
+  width: 55% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
 }
 
-.product-modal-thumb {
-  width: 60px;
-  height: 60px;
-  min-width: 60px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 2px solid #333;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  opacity: 0.6;
-  background: #0d0d0d;
-}
-
-.product-modal-thumb.active,
-.product-modal-thumb:hover {
-  border-color: var(--primary-red) !important;
-  opacity: 1 !important;
-  transform: scale(1.05);
-}
-
-.product-modal-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 12px;
-  width: 100%;
-}
-
-.product-modal-cat {
-  background: rgba(230, 0, 0, 0.15);
-  color: var(--primary-red);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  width: fit-content;
-  text-transform: uppercase;
-}
-
-.product-modal-title {
-  font-family: var(--font-heading);
-  font-size: 1.6rem;
-  color: #fff;
-  line-height: 1.2;
-}
-
-.product-modal-price {
-  font-size: 1.4rem;
-  color: var(--primary-red);
-  font-weight: bold;
-  font-family: var(--font-heading);
-}
-
-.product-modal-desc {
-  font-size: 0.9rem;
-  color: #ccc;
-  line-height: 1.5;
-  white-space: pre-line;
-  background: #0d0d0d;
-  padding: 12px;
-  border-radius: 6px;
-  border-left: 3px solid var(--primary-red);
-}
-
-body.rtl .product-modal-desc {
-  border-left: none;
-  border-right: 3px solid var(--primary-red);
-}
-
-.product-modal-add-btn {
-  background: var(--primary-red);
-  color: #fff;
-  border: none;
-  padding: 14px;
-  border-radius: 8px;
-  font-weight: bold;
-  font-family: var(--font-heading);
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  transition: 0.3s;
-  text-transform: uppercase;
-  margin-top: 5px;
-  width: 100%;
-}
-
-.product-modal-add-btn:hover {
-  background: var(--dark-red);
-}
-
-/* 🔥 تحويل الكارت لـ 1 COLUMN على الموبايل 🔥 */
-@media (max-width: 768px) {
-  .product-modal-content {
-    display: flex !important;
-    flex-direction: column !important; /* تحويل الترتيب لرأسي فوق بعض */
-    gap: 15px !important;
-    padding: 20px 15px !important;
-    max-height: 88vh !important;
-  }
-
-  .product-modal-main-wrap {
-    height: 220px !important; /* صورة كبيرة بملء العرض في الأعلى */
-    padding: 10px !important;
-  }
-
-  .product-modal-title {
-    font-size: 1.3rem !important;
-  }
-
-  .product-modal-price {
-    font-size: 1.25rem !important;
-  }
-
-  .product-modal-desc {
-    font-size: 0.85rem !important;
-    padding: 10px !important;
-    max-height: 140px;
-    overflow-y: auto;
-  }
-
-  .product-modal-add-btn {
-    padding: 12px !important;
-    font-size: 1rem !important;
-  }
+/* 2. Fix Product Cards Padding below Header */
+.container {
+  padding-top: 30px !important;
 }
