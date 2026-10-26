@@ -6,7 +6,7 @@
   <title>تأكيد الطلب - Big Muscle</title>
   <link rel="icon" type="image/png" href="images/logo.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css?v=14.0">
+  <link rel="stylesheet" href="css/style.css?v=15.0">
 </head>
 <body class="rtl">
 
@@ -45,7 +45,7 @@
 
       <form id="checkoutForm">
         
-        <!-- 1. Customer Shipping Form -->
+        <!-- Customer Form -->
         <div class="checkout-card">
           <h2 class="card-heading">بيانات الشحن والتوصيل</h2>
           
@@ -73,11 +73,11 @@
 
           <div class="checkout-field">
             <label for="custAddress">العنوان بالتفصيل *</label>
-            <textarea id="custAddress" rows="3" required placeholder="اسم الشارع، رقم العمارة، رقم الشقة، علامة مميزة..."></textarea>
+            <textarea id="custAddress" rows="3" required placeholder="اسم الشارع، رقم العمارة، رقم الشقة..."></textarea>
           </div>
         </div>
 
-        <!-- 2. Order Total Summary Box -->
+        <!-- Summary -->
         <div class="checkout-card">
           <h2 class="card-heading">ملخص الحساب</h2>
 
@@ -107,28 +107,10 @@
     </div>
   </main>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-container">
-      <div class="footer-col">
-        <img src="images/logo.png" alt="Big Muscle Logo" style="height:45px; margin-bottom:10px;">
-        <p>وجهتك الأولى للمكملات الرياضية الأصلية 100%.</p>
-      </div>
-      <div class="footer-col">
-        <h3>تواصل معنا</h3>
-        <p><i class="fas fa-phone"></i> 01272069590</p>
-        <p><i class="fas fa-truck"></i> الدفع عند الاستلام</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      &copy; 2024 Big Muscle. جميع الحقوق محفوظة.
-    </div>
-  </footer>
-
   <!-- SCRIPTS -->
   <script src="js/main.js"></script>
+  <script src="js/cart.js"></script>
   <script>
-    // Helper to safely extract digits from price strings
     function parsePriceNumber(val) {
       if (typeof val === 'number') return val;
       if (!val) return 0;
@@ -136,13 +118,28 @@
       return parseFloat(cleaned) || 0;
     }
 
+    // Bulletproof Cart Fetcher that looks everywhere
+    function getCheckoutCart() {
+      const keys = ['bigmuscle_cart', 'cart', 'bigmuscleCart'];
+      for (let k of keys) {
+        try {
+          const raw = localStorage.getItem(k);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              return parsed;
+            }
+          }
+        } catch(e) {}
+      }
+      return [];
+    }
+
     let cartSubtotal = 0;
     let cartItems = [];
 
     document.addEventListener('DOMContentLoaded', () => {
-      cartItems = JSON.parse(localStorage.getItem('bigmuscle_cart')) 
-               || JSON.parse(localStorage.getItem('cart')) 
-               || [];
+      cartItems = getCheckoutCart();
 
       if (!cartItems || cartItems.length === 0) {
         alert("السلة فارغة! قم بإضافة منتجات أولاً.");
@@ -150,7 +147,6 @@
         return;
       }
 
-      // Calculate Subtotal Safely
       cartSubtotal = 0;
       cartItems.forEach(item => {
         const itemPrice = parsePriceNumber(item.price);
@@ -164,7 +160,6 @@
       updateOrderTotal();
     });
 
-    // Dynamic Shipping Calculator
     function updateOrderTotal() {
       const regionSelect = document.getElementById('customerRegion');
       const shippingEl = document.getElementById('shippingText');
@@ -187,7 +182,6 @@
       totalEl.textContent = grandTotal + ' ج.م';
     }
 
-    // Submit Order to Backend API
     document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -223,8 +217,7 @@
         });
 
         if (response.ok) {
-          localStorage.removeItem('bigmuscle_cart');
-          localStorage.removeItem('cart');
+          ['bigmuscle_cart', 'cart', 'bigmuscleCart'].forEach(k => localStorage.removeItem(k));
           window.location.href = `https://wa.me/201272069590?text=مرحباً، قمت بعمل طلب جديد بقيمة ${grandTotal} ج.م (شامل الشحن). يرجى تأكيد الطلب.`;
         } else {
           alert('حدث خطأ أثناء حفظ الطلب. حاول مرة أخرى.');
