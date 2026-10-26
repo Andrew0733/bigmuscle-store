@@ -1,73 +1,194 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>Checkout | Big Muscle</title>
-    <!-- حط لينكات الـ CSS هنا زي صفحة cart.html -->
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/cart.css">
+  <meta charset="UTF-8">
+  <!-- Viewport Scaling Fix for Mobile -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>تأكيد الطلب - Big Muscle</title>
+  <link rel="icon" type="image/png" href="images/logo.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css?v=13.0">
 </head>
-<body>
-    <!-- (Navbar هنا) -->
+<body class="rtl">
 
-    <section class="section checkout-section">
-        <h2 class="section-title" data-ar="إتمام الطلب" data-en="CHECKOUT">CHECKOUT</h2>
+ 
+
+  <!-- MAIN CHECKOUT CONTAINER -->
+  <main class="main-content">
+    <div class="checkout-container">
+      <h1 class="checkout-page-title"><i class="fas fa-truck-fast"></i> إتمام الشراء والتوصيل</h1>
+
+      <form id="checkoutForm">
         
-        <div class="checkout-container">
-            <form id="checkout-form" class="checkout-form">
-                <h3 data-ar="بيانات التوصيل" data-en="Delivery Details">Delivery Details</h3>
-                
-                <input type="text" id="name" placeholder="Full Name | الاسم بالكامل" required>
-                <input type="tel" id="phone" placeholder="Phone Number | رقم الهاتف" required>
-                <input type="text" id="address" placeholder="Detailed Address | العنوان بالتفصيل" required>
-                <textarea id="notes" placeholder="Notes (Optional) | ملاحظات (اختياري)"></textarea>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;" data-ar="تأكيد الطلب (الدفع عند الاستلام)" data-en="Confirm Order (Cash on Delivery)">Confirm Order (Cash on Delivery)</button>
-            </form>
+        <!-- 1. Customer Shipping Form -->
+        <div class="checkout-card">
+          <h2 class="card-heading">بيانات الشحن والتوصيل</h2>
+          
+          <div class="checkout-field">
+            <label for="custName">الاسم بالكامل *</label>
+            <input type="text" id="custName" required placeholder="أدخل اسمك بالكامل">
+          </div>
+
+          <div class="checkout-field">
+            <label for="custPhone">رقم الهاتف *</label>
+            <input type="tel" id="custPhone" required placeholder="01xxxxxxxxx">
+          </div>
+
+          <div class="checkout-field">
+            <label for="customerRegion">المنطقة / المحافظة *</label>
+            <select id="customerRegion" required onchange="updateOrderTotal()">
+              <option value="">اختر منطقتك لتحديد سعر التوصيل...</option>
+              <option value="50">القاهرة والجيزة — 50 ج.م</option>
+              <option value="60">الإسكندرية — 60 ج.م</option>
+              <option value="70">محافظات الدلتا والقناة — 70 ج.م</option>
+              <option value="90">صعيد مصر — 90 ج.م</option>
+              <option value="120">سيناء / البحر الأحمر / مطروح — 120 ج.م</option>
+            </select>
+          </div>
+
+          <div class="checkout-field">
+            <label for="custAddress">العنوان بالتفصيل *</label>
+            <textarea id="custAddress" rows="3" required placeholder="اسم الشارع، رقم العمارة، رقم الشقة، علامة مميزة..."></textarea>
+          </div>
         </div>
-    </section>
 
-    <!-- (Footer هنا) -->
+        <!-- 2. Order Total Summary Box -->
+        <div class="checkout-card">
+          <h2 class="card-heading">ملخص الحساب</h2>
 
-    <script src="js/cart.js"></script>
-    <script src="js/main.js"></script>
-    <script>
-    document.getElementById('checkout-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        if(cart.length === 0) {
-            alert("سلتك فارغة! / Your cart is empty!");
-            return;
-        }
+          <div class="summary-line">
+            <span>سعر المنتجات:</span>
+            <strong id="subtotalText">0 ج.م</strong>
+          </div>
 
-        // تجميع بيانات العميل والسلة
-        const orderData = {
-            customerName: document.getElementById('name').value,
-            phone: document.getElementById('phone').value,
-            address: document.getElementById('address').value,
-            notes: document.getElementById('notes').value,
-            items: cart,
-            totalAmount: cart.reduce((total, item) => total + (item.price * item.quantity), 0)
-        };
+          <div class="summary-line">
+            <span>سعر التوصيل:</span>
+            <strong id="shippingText" style="color: #a0a0a0;">اختر المنطقة أولاً</strong>
+          </div>
 
-        try {
-            // إرسال الطلب لقاعدة البيانات
-            const response = await fetch('/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
-            });
+          <div class="summary-divider"></div>
 
-            if(response.ok) {
-                alert("تم تأكيد الطلب بنجاح! سنتواصل معك قريباً. / Order placed successfully!");
-                localStorage.removeItem('bigMuscleCart'); // تفريغ السلة
-                window.location.href = 'index.html'; // الرجوع للرئيسية
-            }
-        } catch (error) {
-            alert("حدث خطأ في الإتصال بالسيرفر!");
-            console.error(error);
-        }
+          <div class="summary-line total-line">
+            <span>الإجمالي النهائي:</span>
+            <strong id="totalText">0 ج.م</strong>
+          </div>
+
+          <button type="submit" class="confirm-order-btn" id="submitBtn">
+            <i class="fas fa-check-circle"></i> تأكيد الطلب (الدفع عند الاستلام)
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-col">
+        <img src="images/logo.png" alt="Big Muscle Logo" style="height:45px; margin-bottom:10px;">
+        <p>وجهتك الأولى للمكملات الرياضية الأصلية 100%.</p>
+      </div>
+      <div class="footer-col">
+        <h3>تواصل معنا</h3>
+        <p><i class="fas fa-phone"></i> 01272069590</p>
+        <p><i class="fas fa-truck"></i> الدفع عند الاستلام</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2024 Big Muscle. جميع الحقوق محفوظة.
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="js/main.js"></script>
+  <script>
+    let subtotal = 0;
+    const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (cart.length === 1) {
+        alert("السلة فارغة! قم بإضافة منتجات أولاً.");
+        window.location.href = "products.html";
+        return;
+      }
+
+      // Calculate Products Subtotal
+      cart.forEach(item => {
+        subtotal += (Number(item.price) || 0) * (Number(item.quantity) || 1);
+      });
+
+      document.getElementById('subtotalText').textContent = subtotal + ' ج.م';
+      document.getElementById('totalText').textContent = subtotal + ' ج.م';
     });
-</script>
+
+    // Update Shipping and Total Price dynamically
+    function updateOrderTotal() {
+      const regionSelect = document.getElementById('customerRegion');
+      const shippingCost = Number(regionSelect.value) || 0;
+
+      if (!regionSelect.value) {
+        document.getElementById('shippingText').textContent = 'اختر المنطقة أولاً';
+        document.getElementById('shippingText').style.color = '#a0a0a0';
+        document.getElementById('totalText').textContent = subtotal + ' ج.م';
+        return;
+      }
+
+      document.getElementById('shippingText').textContent = shippingCost + ' ج.م';
+      document.getElementById('shippingText').style.color = '#ffffff';
+      document.getElementById('totalText').textContent = (subtotal + shippingCost) + ' ج.م';
+    }
+
+    // Submit Order to API
+    document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const regionSelect = document.getElementById('customerRegion');
+      if (!regionSelect.value) {
+        alert('من فضلك اختر المنطقة لتحديد سعر التوصيل.');
+        return;
+      }
+
+      const shippingCost = Number(regionSelect.value);
+      const grandTotal = subtotal + shippingCost;
+      const regionName = regionSelect.options[regionSelect.selectedIndex].text;
+
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري جاري إرسال الطلب...';
+      submitBtn.disabled = true;
+
+      const orderData = {
+        customerName: document.getElementById('custName').value.trim(),
+        customerPhone: document.getElementById('custPhone').value.trim(),
+        customerAddress: document.getElementById('custAddress').value.trim() + " (" + regionName + ")",
+        cartItems: cart,
+        totalAmount: grandTotal,
+        shippingCost: shippingCost,
+        status: "Pending"
+      };
+
+      try {
+        const response = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData)
+        });
+
+        if (response.ok) {
+          localStorage.removeItem('bigmuscle_cart');
+          window.location.href = `https://wa.me/201272069590?text=مرحباً، قمت بعمل طلب جديد بقيمة ${grandTotal} ج.م (شامل الشحن). يرجى تأكيد الطلب.`;
+        } else {
+          alert('حدث خطأ أثناء حفظ الطلب. حاول مرة أخرى.');
+          submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد الطلب (الدفع عند الاستلام)';
+          submitBtn.disabled = false;
+        }
+      } catch (err) {
+        console.error(err);
+        alert('تأكد من الاتصال بالإنترنت.');
+        submitBtn.innerHTML = '<i class="fas fa-check-circle"></i> تأكيد الطلب (الدفع عند الاستلام)';
+        submitBtn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>

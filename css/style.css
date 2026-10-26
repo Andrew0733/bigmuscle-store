@@ -1400,3 +1400,140 @@ body.rtl .modal-close-btn {
 }
 
 
+
+
+/* ==========================================================================
+   CHECKOUT PAGE MOBILE PERFECT FIT STYLES
+   ========================================================================== */
+
+.checkout-container {
+  width: 100% !important;
+  max-width: 650px !important;
+  margin: 0 auto !important;
+  padding: 15px 12px !important;
+  box-sizing: border-box !important;
+}
+
+.checkout-page-title {
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 1.5rem !important;
+  color: #ffffff !important;
+  text-align: center !important;
+  margin: 15px 0 20px 0 !important;
+  text-transform: uppercase !important;
+}
+
+.checkout-card {
+  background: #141414 !important;
+  border: 1px solid #262626 !important;
+  border-radius: 12px !important;
+  padding: 18px 15px !important;
+  margin-bottom: 15px !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+}
+
+.card-heading {
+  font-family: 'Oswald', sans-serif !important;
+  color: #E60000 !important;
+  font-size: 1.2rem !important;
+  margin-bottom: 15px !important;
+  border-bottom: 1px solid #262626 !important;
+  padding-bottom: 8px !important;
+}
+
+.checkout-field {
+  margin-bottom: 14px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.checkout-field label {
+  display: block !important;
+  font-size: 0.88rem !important;
+  color: #a0a0a0 !important;
+  margin-bottom: 6px !important;
+  font-weight: 600 !important;
+}
+
+/* Font size 16px to prevent mobile auto-zoom and scaling bugs */
+.checkout-field input, 
+.checkout-field select, 
+.checkout-field textarea {
+  width: 100% !important;
+  height: 46px !important;
+  padding: 8px 12px !important;
+  background: #1f1f1f !important;
+  border: 1px solid #262626 !important;
+  border-radius: 8px !important;
+  color: #ffffff !important;
+  font-size: 16px !important; 
+  box-sizing: border-box !important;
+  outline: none !important;
+  font-family: inherit !important;
+}
+
+.checkout-field textarea {
+  height: auto !important;
+  min-height: 80px !important;
+  resize: vertical !important;
+}
+
+.checkout-field input:focus, 
+.checkout-field select:focus, 
+.checkout-field textarea:focus {
+  border-color: #E60000 !important;
+}
+
+.summary-line {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  font-size: 0.95rem !important;
+  color: #a0a0a0 !important;
+  margin-bottom: 10px !important;
+}
+
+.summary-line strong {
+  color: #ffffff !important;
+}
+
+.summary-divider {
+  height: 1px !important;
+  background: #262626 !important;
+  margin: 12px 0 !important;
+}
+
+.total-line {
+  font-size: 1.2rem !important;
+  color: #ffffff !important;
+}
+
+.total-line strong {
+  color: #E60000 !important;
+  font-size: 1.35rem !important;
+}
+
+.confirm-order-btn {
+  width: 100% !important;
+  height: 48px !important;
+  background: #E60000 !important;
+  color: #ffffff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin-top: 15px !important;
+}
+
+@media (max-width: 768px) {
+  .checkout-container {
+    padding: 10px 8px !important;
+  }
+}
+
