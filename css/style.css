@@ -1086,65 +1086,90 @@ body.rtl .modal-close-btn {
 
 
 /* ==========================================================================
-   STRICT MOBILE HEADER & OVERFLOW FIX (max-width: 768px)
+   PERFECT MOBILE HEADER LAYOUT (max-width: 768px)
    ========================================================================== */
 
 @media (max-width: 768px) {
-  /* Prevent horizontal scroll globally */
   html, body {
     width: 100% !important;
     max-width: 100% !important;
     overflow-x: hidden !important;
   }
 
-  .navbar {
-    width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-  }
-
   .nav-container {
-    padding: 8px 12px !important;
     display: flex !important;
     flex-wrap: wrap !important;
     align-items: center !important;
     justify-content: space-between !important;
+    padding: 10px 14px !important;
+    gap: 0 !important;
     width: 100% !important;
-    max-width: 100% !important;
     box-sizing: border-box !important;
   }
 
-  /* Logo Sizing on Mobile */
+  /* Row 1 Left: Logo */
   .logo, a.logo {
+    order: 1 !important;
     max-height: 38px !important;
+    margin: 0 !important;
   }
 
   .logo img {
-    height: 35px !important;
-    max-height: 35px !important;
+    height: 34px !important;
+    max-height: 34px !important;
     width: auto !important;
   }
 
-  /* Search bar full width on row 2 */
+  /* Row 1 Right: Actions (AR, Cart, Hamburger) */
+  .nav-actions {
+    order: 2 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin: 0 !important;
+  }
+
+  .lang-btn {
+    padding: 4px 8px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .cart-icon {
+    font-size: 1.25rem !important;
+  }
+
+  .hamburger-btn {
+    display: block !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.4rem !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    padding: 2px !important;
+  }
+
+  /* Row 2: Search Bar Full Width Underneath */
   .search-container {
     order: 3 !important;
+    flex-basis: 100% !important;
     width: 100% !important;
     max-width: 100% !important;
-    margin-top: 8px !important;
+    margin-top: 10px !important;
   }
 
   .search-container input {
     width: 100% !important;
-    padding: 7px 35px 7px 12px !important;
-    font-size: 0.82rem !important;
+    padding: 8px 38px 8px 14px !important;
+    font-size: 0.85rem !important;
+    border-radius: 20px !important;
+    box-sizing: border-box !important;
   }
 
-  /* Hide Desktop Menu Links on Mobile */
+  /* Navigation Sidebar Drawer */
   .nav-menu {
     display: none !important;
   }
 
-  /* Mobile Drawer when Active */
   .nav-menu.active,
   .nav-menu.show-mobile {
     display: flex !important;
@@ -1158,7 +1183,6 @@ body.rtl .modal-close-btn {
     height: 100dvh !important;
     background-color: #0d0d0d !important;
     border-left: 2px solid #E60000 !important;
-    border-right: none !important;
     flex-direction: column !important;
     justify-content: flex-start !important;
     align-items: stretch !important;
@@ -1186,22 +1210,5 @@ body.rtl .modal-close-btn {
     border-bottom: 1px solid #262626 !important;
     color: #ffffff !important;
     font-size: 0.95rem !important;
-  }
-
-  /* Right Action Buttons (Lang, Cart, Hamburger) */
-  .nav-actions {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-  }
-
-  .hamburger-btn {
-    display: block !important;
-    background: none !important;
-    border: none !important;
-    font-size: 1.4rem !important;
-    color: #ffffff !important;
-    cursor: pointer !important;
-    padding: 4px !important;
   }
 }
