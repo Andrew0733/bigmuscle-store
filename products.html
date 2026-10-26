@@ -17,49 +17,43 @@
 <body>
 
   <!-- ================= NAVBAR ================= -->
+    <!-- NAVBAR HEADER -->
   <nav class="navbar">
     <div class="nav-container">
-      <a href="index.html" class="nav-logo">
+      <!-- 1. Logo -->
+      <a href="index.html" class="logo">
         <img src="images/logo.png" alt="Big Muscle Logo">
       </a>
 
-      <!-- Search Bar -->
-      <div class="search-form">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search..." data-en-placeholder="Search..." data-ar-placeholder="ابحث هنا...">
-        <button type="button" id="searchBtn" class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+      <!-- 2. Search Container -->
+      <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search products...">
+        <button id="searchBtn"><i class="fas fa-search"></i></button>
       </div>
 
-      <!-- Navigation Links -->
+      <!-- 3. Navigation Links Menu -->
       <ul class="nav-menu" id="navMenu">
-        <li class="nav-item">
-          <a href="index.html" class="nav-link" data-en="Home" data-ar="الرئيسية">Home</a>
-        </li>
-        <li class="nav-item">
-          <a href="products.html" class="nav-link active" data-en="All Products" data-ar="جميع المنتجات">All Products</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a href="#" class="nav-link" data-en="Shop" data-ar="المتجر">Shop <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i></a>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="products.html" class="active">All Products</a></li>
+        <li class="dropdown">
+          <a href="products.html">Shop <i class="fas fa-chevron-down"></i></a>
           <ul class="dropdown-menu" id="categoriesDropdown">
             <!-- Dynamic Categories -->
           </ul>
         </li>
-        <li class="nav-item">
-          <a href="#" class="nav-link" id="aboutUsBtn" data-en="About Us" data-ar="من نحن">About Us</a>
-        </li>
+        <li><a href="#" id="aboutUsBtn">About Us</a></li>
       </ul>
 
-      <!-- Actions (Lang, Cart, Hamburger) -->
+      <!-- 4. Action Buttons (Lang, Cart, Hamburger) -->
       <div class="nav-actions">
-        <button id="langToggleBtn" class="lang-btn">AR</button>
-        <a href="cart.html" class="icon-btn" title="Cart">
-          <i class="fa-solid fa-cart-shopping"></i>
-          <span class="cart-badge" id="cartCount">0</span>
+        <button class="lang-btn" id="langToggle">AR</button>
+        <a href="cart.html" class="cart-icon">
+          <i class="fas fa-shopping-cart"></i>
+          <span class="cart-badge" id="cartBadge">0</span>
         </a>
-        <div class="hamburger" id="hamburgerBtn">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
+        <button class="hamburger-btn" id="hamburgerBtn">
+          <i class="fas fa-bars"></i>
+        </button>
       </div>
     </div>
   </nav>
