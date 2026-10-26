@@ -1149,7 +1149,7 @@ body.rtl .modal-close-btn {
   }
 
   /* Row 2: Search Bar Full Width Underneath */
-  /*.search-container {
+  .search-container {
     order: 3 !important;
     flex-basis: 100% !important;
     width: 100% !important;
@@ -1170,38 +1170,11 @@ body.rtl .modal-close-btn {
     max-width: 100% !important;
     outline: none !important;
     border-color: #E60000 !important; 
-}*/
-
-/* منع تمدد شريط البحث نهائياً - الإصدار القاطع */
-
-.search-container {
-    width: 100% !important;
-    max-width: 100% !important;
-    flex: 0 0 100% !important; /* يمنع الـ Flexbox من تغيير حجم الحاوية */
-    position: relative !important;
-    margin: 10px 0 5px 0 !important;
 }
 
-.search-container input {
-    width: 100% !important;
-    min-width: 100% !important;
-    max-width: 100% !important;
-    box-sizing: border-box !important;
-    /* منع المتصفح من عمل زووم تلقائي (يجب أن يكون الخط 16 بكسل) */
-    font-size: 16px !important; 
-    transition: border-color 0.3s ease !important; /* تغيير اللون فقط */
-    transform: none !important; /* يمنع أي تحرك في الأبعاد */
-}
 
-.search-container input:focus {
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 100% !important;
-    outline: none !important;
-    border-color: #E60000 !important;
-    box-shadow: none !important; /* منع الظل الذي قد يوحي بالتمدد */
-    transform: none !important;
-}
+
+
 
   /* Navigation Sidebar Drawer */
   .nav-menu {
