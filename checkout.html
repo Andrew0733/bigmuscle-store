@@ -107,7 +107,7 @@
     const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
 
     document.addEventListener('DOMContentLoaded', () => {
-      if (cart.length === 1) {
+      if (cart.length === 0) {
         alert("السلة فارغة! قم بإضافة منتجات أولاً.");
         window.location.href = "products.html";
         return;
