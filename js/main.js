@@ -182,39 +182,59 @@ window.changeModalImage = function(imgUrl, thumbEl) {
   if (thumbEl) thumbEl.classList.add('active');
 };*/
 
-
 /* ==========================================================================
-   BIG MUSCLE STORE - MAIN JS (Step 1: Hamburger Menu Fix)
+   BIG MUSCLE STORE - MAIN JS (Step 1: Direct Hamburger Toggle)
    ========================================================================== */
 
+// Global Toggle Function for Mobile Menu
+window.toggleMobileMenu = function(e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  
+  const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
+  if (!navMenu) return;
+
+  const isRtl = document.body.classList.contains('rtl');
+  const isOpen = navMenu.classList.contains('active');
+
+  if (isOpen) {
+    navMenu.classList.remove('active');
+    navMenu.style.transform = isRtl ? 'translateX(-100%)' : 'translateX(100%)';
+  } else {
+    navMenu.classList.add('active');
+    navMenu.style.transform = 'translateX(0)';
+  }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
-  initHamburgerMenu();
+  initHamburger();
   initLangToggle();
   initCartBadge();
   initSearch();
 });
 
-// Mobile Hamburger Menu Toggle
-function initHamburgerMenu() {
+function initHamburger() {
   const hamburgerBtn = document.getElementById('hamburgerBtn') || document.querySelector('.hamburger-btn');
   const navMenu = document.getElementById('navMenu') || document.querySelector('.nav-menu');
 
-  if (hamburgerBtn && navMenu) {
-    hamburgerBtn.onclick = function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      navMenu.classList.toggle('active');
-    };
-
-    document.addEventListener('click', (e) => {
-      if (navMenu.classList.contains('active') && !navMenu.contains(e.target) && !hamburgerBtn.contains(e.target)) {
-        navMenu.classList.remove('active');
-      }
-    });
+  if (hamburgerBtn) {
+    hamburgerBtn.onclick = window.toggleMobileMenu;
   }
+
+  // Close when clicking outside
+  document.addEventListener('click', (e) => {
+    if (navMenu && navMenu.classList.contains('active')) {
+      if (!navMenu.contains(e.target) && hamburgerBtn && !hamburgerBtn.contains(e.target)) {
+        const isRtl = document.body.classList.contains('rtl');
+        navMenu.classList.remove('active');
+        navMenu.style.transform = isRtl ? 'translateX(-100%)' : 'translateX(100%)';
+      }
+    }
+  });
 }
 
-// Language Toggle (Arabic / English)
 function initLangToggle() {
   const langToggleBtn = document.getElementById('langToggle');
   const currentLang = localStorage.getItem('lang') || 'en';
@@ -238,7 +258,6 @@ function initLangToggle() {
   }
 }
 
-// Update Cart Counter Badge
 function initCartBadge() {
   const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
   const totalCount = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
@@ -248,7 +267,6 @@ function initCartBadge() {
   }
 }
 
-// Search Handler
 function initSearch() {
   const searchInput = document.getElementById('searchInput');
   const searchBtn = document.getElementById('searchBtn');
