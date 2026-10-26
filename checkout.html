@@ -2,41 +2,16 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
+  <!-- Viewport Scaling Fix for Mobile -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>تأكيد الطلب - Big Muscle</title>
   <link rel="icon" type="image/png" href="images/logo.png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="css/style.css?v=15.0">
+  <link rel="stylesheet" href="css/style.css?v=13.0">
 </head>
 <body class="rtl">
 
-  <!-- NAVBAR HEADER -->
-  <nav class="navbar">
-    <div class="nav-container">
-      <a href="index.html" class="logo">
-        <img src="images/logo.png" alt="Big Muscle">
-      </a>
-      <div class="search-container">
-        <input type="text" id="searchInput" placeholder="بحث..." autocomplete="off">
-        <button type="button" id="searchBtn"><i class="fas fa-search"></i></button>
-      </div>
-      <ul class="nav-menu" id="navMenu">
-        <li><a href="index.html">الرئيسية</a></li>
-        <li><a href="products.html">كل المنتجات</a></li>
-        <li><a href="#" class="active">إتمام الطلب</a></li>
-      </ul>
-      <div class="nav-actions">
-        <button class="lang-btn" id="langToggle">EN</button>
-        <a href="cart.html" class="cart-icon">
-          <i class="fas fa-shopping-cart"></i>
-          <span class="cart-badge" id="cartBadge">0</span>
-        </a>
-        <button class="hamburger-btn" id="hamburgerBtn" aria-label="القائمة">
-          <i class="fas fa-bars"></i>
-        </button>
-      </div>
-    </div>
-  </nav>
+ 
 
   <!-- MAIN CHECKOUT CONTAINER -->
   <main class="main-content">
@@ -45,7 +20,7 @@
 
       <form id="checkoutForm">
         
-        <!-- Customer Form -->
+        <!-- 1. Customer Shipping Form -->
         <div class="checkout-card">
           <h2 class="card-heading">بيانات الشحن والتوصيل</h2>
           
@@ -73,11 +48,11 @@
 
           <div class="checkout-field">
             <label for="custAddress">العنوان بالتفصيل *</label>
-            <textarea id="custAddress" rows="3" required placeholder="اسم الشارع، رقم العمارة، رقم الشقة..."></textarea>
+            <textarea id="custAddress" rows="3" required placeholder="اسم الشارع، رقم العمارة، رقم الشقة، علامة مميزة..."></textarea>
           </div>
         </div>
 
-        <!-- Summary -->
+        <!-- 2. Order Total Summary Box -->
         <div class="checkout-card">
           <h2 class="card-heading">ملخص الحساب</h2>
 
@@ -107,81 +82,64 @@
     </div>
   </main>
 
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-container">
+      <div class="footer-col">
+        <img src="images/logo.png" alt="Big Muscle Logo" style="height:45px; margin-bottom:10px;">
+        <p>وجهتك الأولى للمكملات الرياضية الأصلية 100%.</p>
+      </div>
+      <div class="footer-col">
+        <h3>تواصل معنا</h3>
+        <p><i class="fas fa-phone"></i> 01272069590</p>
+        <p><i class="fas fa-truck"></i> الدفع عند الاستلام</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; 2024 Big Muscle. جميع الحقوق محفوظة.
+    </div>
+  </footer>
+
   <!-- SCRIPTS -->
   <script src="js/main.js"></script>
-  <script src="js/cart.js"></script>
   <script>
-    function parsePriceNumber(val) {
-      if (typeof val === 'number') return val;
-      if (!val) return 0;
-      const cleaned = String(val).replace(/[^0-9.]/g, '');
-      return parseFloat(cleaned) || 0;
-    }
-
-    // Bulletproof Cart Fetcher that looks everywhere
-    function getCheckoutCart() {
-      const keys = ['bigmuscle_cart', 'cart', 'bigmuscleCart'];
-      for (let k of keys) {
-        try {
-          const raw = localStorage.getItem(k);
-          if (raw) {
-            const parsed = JSON.parse(raw);
-            if (Array.isArray(parsed) && parsed.length > 0) {
-              return parsed;
-            }
-          }
-        } catch(e) {}
-      }
-      return [];
-    }
-
-    let cartSubtotal = 0;
-    let cartItems = [];
+    let subtotal = 0;
+    const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
 
     document.addEventListener('DOMContentLoaded', () => {
-      cartItems = getCheckoutCart();
-
-      if (!cartItems || cartItems.length === 0) {
+      if (cart.length === 0) {
         alert("السلة فارغة! قم بإضافة منتجات أولاً.");
         window.location.href = "products.html";
         return;
       }
 
-      cartSubtotal = 0;
-      cartItems.forEach(item => {
-        const itemPrice = parsePriceNumber(item.price);
-        const itemQty = parsePriceNumber(item.quantity || item.qty || 1) || 1;
-        cartSubtotal += (itemPrice * itemQty);
+      // Calculate Products Subtotal
+      cart.forEach(item => {
+        subtotal += (Number(item.price) || 0) * (Number(item.quantity) || 1);
       });
 
-      document.getElementById('subtotalText').textContent = cartSubtotal + ' ج.م';
-      document.getElementById('totalText').textContent = cartSubtotal + ' ج.م';
-
-      updateOrderTotal();
+      document.getElementById('subtotalText').textContent = subtotal + ' ج.م';
+      document.getElementById('totalText').textContent = subtotal + ' ج.م';
     });
 
+    // Update Shipping and Total Price dynamically
     function updateOrderTotal() {
       const regionSelect = document.getElementById('customerRegion');
-      const shippingEl = document.getElementById('shippingText');
-      const totalEl = document.getElementById('totalText');
+      const shippingCost = Number(regionSelect.value) || 0;
 
-      if (!regionSelect || !shippingEl || !totalEl) return;
-
-      const shippingCost = parsePriceNumber(regionSelect.value);
-
-      if (!regionSelect.value || shippingCost === 0) {
-        shippingEl.textContent = 'اختر المنطقة أولاً';
-        shippingEl.style.color = '#a0a0a0';
-        totalEl.textContent = cartSubtotal + ' ج.م';
+      if (!regionSelect.value) {
+        document.getElementById('shippingText').textContent = 'اختر المنطقة أولاً';
+        document.getElementById('shippingText').style.color = '#a0a0a0';
+        document.getElementById('totalText').textContent = subtotal + ' ج.م';
         return;
       }
 
-      const grandTotal = cartSubtotal + shippingCost;
-      shippingEl.textContent = shippingCost + ' ج.م';
-      shippingEl.style.color = '#ffffff';
-      totalEl.textContent = grandTotal + ' ج.م';
+      document.getElementById('shippingText').textContent = shippingCost + ' ج.م';
+      document.getElementById('shippingText').style.color = '#ffffff';
+      document.getElementById('totalText').textContent = (subtotal + shippingCost) + ' ج.م';
     }
 
+    // Submit Order to API
     document.getElementById('checkoutForm').addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -191,19 +149,19 @@
         return;
       }
 
-      const shippingCost = parsePriceNumber(regionSelect.value);
-      const grandTotal = cartSubtotal + shippingCost;
+      const shippingCost = Number(regionSelect.value);
+      const grandTotal = subtotal + shippingCost;
       const regionName = regionSelect.options[regionSelect.selectedIndex].text;
 
       const submitBtn = document.getElementById('submitBtn');
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري إرسال الطلب...';
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري جاري إرسال الطلب...';
       submitBtn.disabled = true;
 
       const orderData = {
         customerName: document.getElementById('custName').value.trim(),
         customerPhone: document.getElementById('custPhone').value.trim(),
         customerAddress: document.getElementById('custAddress').value.trim() + " (" + regionName + ")",
-        cartItems: cartItems,
+        cartItems: cart,
         totalAmount: grandTotal,
         shippingCost: shippingCost,
         status: "Pending"
@@ -217,7 +175,7 @@
         });
 
         if (response.ok) {
-          ['bigmuscle_cart', 'cart', 'bigmuscleCart'].forEach(k => localStorage.removeItem(k));
+          localStorage.removeItem('bigmuscle_cart');
           window.location.href = `https://wa.me/201272069590?text=مرحباً، قمت بعمل طلب جديد بقيمة ${grandTotal} ج.م (شامل الشحن). يرجى تأكيد الطلب.`;
         } else {
           alert('حدث خطأ أثناء حفظ الطلب. حاول مرة أخرى.');
