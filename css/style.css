@@ -1223,3 +1223,178 @@ body.rtl .modal-close-btn {
     font-size: 0.95rem !important;
   }
 }
+
+
+
+/* ==========================================================================
+   MODAL RESPONSIVE STYLES (DESKTOP FLEX / MOBILE COLUMN STACK)
+   ========================================================================== */
+
+.modal-content-box {
+  background: #141414 !important;
+  border: 1px solid #262626 !important;
+  border-radius: 16px !important;
+  width: 90% !important;
+  max-width: 700px !important;
+  max-height: 90vh !important;
+  overflow-y: auto !important;
+  position: relative !important;
+  padding: 25px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 20px !important;
+  box-sizing: border-box !important;
+  color: #fff !important;
+  margin: auto !important;
+}
+
+.modal-close-btn {
+  position: absolute !important;
+  top: 12px !important;
+  right: 15px !important;
+  background: none !important;
+  border: none !important;
+  color: #fff !important;
+  font-size: 1.8rem !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+}
+
+body.rtl .modal-close-btn {
+  right: auto !important;
+  left: 15px !important;
+}
+
+.modal-gallery-box {
+  width: 45% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.modal-main-img-wrap {
+  width: 100% !important;
+  height: 220px !important;
+  background: #ffffff !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 10px !important;
+  box-sizing: border-box !important;
+}
+
+.modal-main-img-wrap img {
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+}
+
+.modal-thumbs-wrap {
+  display: flex !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  padding-bottom: 5px !important;
+}
+
+.modal-thumb-item {
+  width: 45px !important;
+  height: 45px !important;
+  object-fit: contain !important;
+  background: #fff !important;
+  border-radius: 6px !important;
+  padding: 2px !important;
+  cursor: pointer !important;
+  border: 2px solid transparent !important;
+}
+
+.modal-thumb-item.active {
+  border-color: #E60000 !important;
+}
+
+.modal-details-box {
+  width: 55% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  justify-content: center !important;
+}
+
+.modal-cat-text {
+  font-size: 0.8rem !important;
+  color: #E60000 !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+}
+
+.modal-title-text {
+  color: #ffffff !important;
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 1.3rem !important;
+  margin: 0 !important;
+  line-height: 1.3 !important;
+}
+
+.modal-price-text {
+  font-size: 1.2rem !important;
+  font-weight: 800 !important;
+  color: #E60000 !important;
+}
+
+.modal-desc-box {
+  color: #a0a0a0 !important;
+  font-size: 0.85rem !important;
+  line-height: 1.4 !important;
+  max-height: 120px !important;
+  overflow-y: auto !important;
+  background: #1a1a1a !important;
+  padding: 10px !important;
+  border-radius: 8px !important;
+  border: 1px solid #262626 !important;
+}
+
+.modal-cart-btn {
+  width: 100% !important;
+  height: 42px !important;
+  background: #E60000 !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  margin-top: 5px !important;
+}
+
+/* MOBILE MODAL LAYOUT (PICTURE ON TOP, DETAILS BELOW) */
+@media (max-width: 768px) {
+  .modal-content-box {
+    flex-direction: column !important; /* Y-Axis Vertical Stack */
+    padding: 20px 15px !important;
+    gap: 15px !important;
+  }
+
+  .modal-gallery-box {
+    width: 100% !important;
+  }
+
+  .modal-main-img-wrap {
+    height: 180px !important; /* Clean height for mobile picture */
+  }
+
+  .modal-details-box {
+    width: 100% !important;
+  }
+
+  .modal-title-text {
+    font-size: 1.15rem !important;
+  }
+
+  .modal-price-text {
+    font-size: 1.1rem !important;
+  }
+}
