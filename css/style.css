@@ -1,5 +1,5 @@
 /* ==========================================================================
-   BIG MUSCLE STORE - GLOBAL STYLES (v6.1 Desktop & Mobile Perfected)
+   BIG MUSCLE STORE - GLOBAL STYLES (v7.0 Desktop & Mobile Perfected)
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap');
@@ -42,7 +42,7 @@ ul {
 }
 
 /* ==========================================================================
-   NAVBAR & HEADER (DESKTOP & MOBILE FIXED)
+   NAVBAR & HEADER (STRICT LOGO & FLEX FIX)
    ========================================================================== */
 
 .navbar {
@@ -64,27 +64,29 @@ ul {
   gap: 15px;
 }
 
-/* LOGO FIX - STRICT MAXIMUM SIZING */
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-  text-decoration: none;
+/* ABSOLUTE STRICT LOGO SIZING FOR DESKTOP AND MOBILE */
+.logo, a.logo, div.logo {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  max-height: 48px !important;
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
 }
 
-.logo img {
-  height: 45px !important;
-  max-height: 45px !important;
+.logo img, a.logo img, div.logo img, img.logo, .nav-container img {
+  height: 40px !important;
+  max-height: 40px !important;
   width: auto !important;
-  max-width: 180px !important;
+  max-width: 160px !important;
   object-fit: contain !important;
   display: block !important;
+  flex-shrink: 0 !important;
 }
 
 .logo span {
   font-family: var(--font-heading);
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--primary-color);
   white-space: nowrap;
@@ -92,7 +94,7 @@ ul {
 
 .search-container {
   flex: 1;
-  max-width: 400px;
+  max-width: 380px;
   position: relative;
 }
 
@@ -252,10 +254,11 @@ body.rtl .dropdown-menu {
   text-transform: uppercase;
 }
 
-.products-grid {
+.products-grid, #productsGrid, #featuredProductsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
   gap: 20px;
+  width: 100%;
 }
 
 .product-card {
@@ -354,11 +357,12 @@ body.rtl .dropdown-menu {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(8px);
-  z-index: 10000;
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 99999;
   display: none;
   align-items: center;
   justify-content: center;
@@ -486,10 +490,8 @@ body.rtl .modal-close-btn {
     padding: 60px 20px 20px 20px !important;
     gap: 15px !important;
     z-index: 999999 !important;
-    transform: translateX(100%) !important;
-    transition: transform 0.3s ease-in-out, visibility 0.3s ease-in-out !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
+    transform: translateX(100%);
+    transition: transform 0.3s ease-in-out !important;
     box-shadow: -5px 0 25px rgba(0, 0, 0, 0.9) !important;
   }
 
@@ -499,16 +501,13 @@ body.rtl .modal-close-btn {
     left: 0 !important;
     border-left: none !important;
     border-right: 2px solid var(--primary-color) !important;
-    transform: translateX(-100%) !important;
-    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.9) !important;
+    transform: translateX(-100%);
   }
 
   /* Drawer Active State */
   .nav-menu.active,
   body.rtl .nav-menu.active {
     transform: translateX(0) !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
   }
 
   .nav-menu li {
@@ -618,7 +617,6 @@ body.rtl .modal-close-btn {
     margin: 2px 0 6px 0 !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
-    line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
