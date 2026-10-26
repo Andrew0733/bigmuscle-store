@@ -100,9 +100,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    if (searchBtn) {
+    /*if (searchBtn) {
         searchBtn.addEventListener('click', executeSearch);
-    }
+    }*/
 
     if (searchInput) {
         searchInput.addEventListener('keypress', (e) => {
