@@ -125,8 +125,8 @@ function renderProducts(products, container) {
         </div>
         <div class="product-info">
           <span class="product-category">${category}</span>
-          <h3 class="product-title">${displayName}</h3> <div class="product-price">${price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}</div>
-          
+          <h3 class="product-title">${displayName}</h3>
+          <div class="product-price">${price} ${currentLang === 'ar' ? 'ج.م' : 'EGP'}</div>
           <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${productIdStr}', '${safeNameForCart}', ${price}, '${mainImg}')">
             <i class="fa-solid fa-cart-shopping"></i>
             <span data-en="Add to Cart" data-ar="أضف لسلة">${currentLang === 'ar' ? 'أضف لسلة' : 'Add to Cart'}</span>
