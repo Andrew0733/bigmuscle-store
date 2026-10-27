@@ -225,101 +225,124 @@ body.rtl .nav-socials {
 /* ===================================================
    📱 MOBILE & TABLET RESPONSIVE (الموبايل)
    =================================================== */
+/* ==========================================
+   Navbar موبايل - لوجو شمال / عناصر وسط / همبرجر يمين
+========================================== */
 @media (max-width: 900px) {
-    .navbar {
-        padding: 10px 3%;
+
+    .nav-container {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 10px 12px !important;
+        gap: 8px !important;
     }
 
-    .logo img {
-        height: 38px; /* تصغير اللوجو لتوفير مساحة */
+    /* 1. اللوجو على الشمال */
+    .logo,
+    .nav-logo {
+        order: 1 !important;
+        flex: 0 0 auto !important;
+        margin: 0 !important;
+    }
+    .logo img,
+    .nav-logo img {
+        height: 36px !important;
+        width: auto !important;
+        display: block !important;
     }
 
-    .menu-toggle {
-        display: block; /* إظهار أيقونة الـ Menu */
-    }
-
-    .nav-links {
-        display: none; /* إخفاء القائمة الرئيسية */
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background-color: rgba(15, 15, 15, 0.98);
-        padding: 20px;
-        text-align: center;
-        border-top: 2px solid var(--primary-red);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.8);
-        z-index: 999;
-    }
-
-    .nav-links.active {
-        display: flex;
-    }
-
-    .nav-links li {
-        margin: 10px 0;
-        width: 100%;
-    }
-
-    .dropdown-menu {
-        position: static;
-        display: none;
-        background: rgba(30, 30, 30, 0.5);
-        box-shadow: none;
-        border: none;
-        border-radius: 6px;
-        margin-top: 8px;
-    }
-
-    .dropdown:hover .dropdown-menu {
-        display: block;
-    }
-
+    /* 2. باقي العناصر في النص (سيرش + لغة + سلة) */
     .nav-actions {
-        gap: 8px; /* تقليل المسافات بين الأزرار */
+        order: 2 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 1 1 auto !important;
+        gap: 8px !important;
+        margin: 0 6px !important;
     }
 
-    .search-box {
-        padding: 2px 6px;
+    /* السيرش في النص */
+    .search-box,
+    .search-form {
+        display: flex !important;
+        align-items: center !important;
+        flex: 1 1 auto !important;
+        max-width: 160px !important;
+        margin: 0 !important;
+    }
+    .search-box input,
+    .search-form input {
+        width: 100% !important;
+        font-size: 16px !important; /* يمنع الزووم */
+        padding: 7px 10px !important;
+        box-sizing: border-box !important;
+    }
+    .search-box input:focus,
+    .search-form input:focus {
+        width: 100% !important;
+        max-width: 100% !important;
     }
 
-    .search-box input {
-        width: 75px; /* عرض مناسب جداً للموبايل */
-        font-size: 0.8rem;
+    /* زر اللغة */
+    .lang-btn,
+    #lang-toggle,
+    #langToggleBtn {
+        flex: 0 0 auto !important;
+        font-size: 13px !important;
+        padding: 5px 8px !important;
+        white-space: nowrap !important;
     }
 
-    .search-box input:focus {
-        width: 110px; /* يكبر حاجة بسيطة من غير ما يزق باقي الأزرار */
+    /* أيقونة السلة */
+    .cart-icon,
+    a.cart-icon {
+        flex: 0 0 auto !important;
+        font-size: 1.15rem !important;
+        position: relative !important;
     }
 
-    .lang-btn {
-        padding: 4px 8px;
-        font-size: 0.8rem;
-    }
-
-    .cart-icon {
-        font-size: 1.15rem;
-    }
-
+    /* إخفاء السوشيال في الموبايل */
     .nav-socials {
-        display: none; /* إخفاء السوشيال من الهيدر في الموبايل لتقليل الزحمة */
+        display: none !important;
     }
-}
 
-/* للشاشات الصغير جداً (أقل من 380px) */
-@media (max-width: 380px) {
-    .logo img {
-        height: 32px;
+    /* 3. الهامبرجر على اليمين */
+    .menu-toggle,
+    #mobile-menu,
+    .hamburger,
+    #hamburgerBtn {
+        order: 3 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 0 0 auto !important;
+        margin: 0 !important;
+        margin-left: 4px !important;
+        font-size: 1.35rem !important;
+        color: #ffffff !important;
+        cursor: pointer !important;
+        background: transparent !important;
+        border: none !important;
+        padding: 4px !important;
     }
-    .search-box input {
-        width: 55px;
+
+    /* إخفاء لينكات الديسكتوب */
+    .nav-links {
+        display: none;
     }
-    .search-box input:focus {
-        width: 90px;
-    }
-    .lang-btn {
-        padding: 3px 6px;
-        font-size: 0.75rem;
+    .nav-links.active {
+        display: flex !important;
+        flex-direction: column !important;
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        width: 100% !important;
+        background: rgba(15,15,15,0.98) !important;
+        padding: 20px !important;
+        z-index: 999 !important;
+        border-top: 2px solid #E60000 !important;
     }
 }
