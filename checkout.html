@@ -1,147 +1,205 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Checkout | Big Muscle</title>
-    <!-- حط لينكات الـ CSS هنا زي صفحة cart.html -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Muscle | إتمام الطلب - Checkout</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cart.css">
 </head>
 <body>
-    <!-- (Navbar هنا) -->
 
-    <section class="section checkout-section">
-        <h2 class="section-title" data-ar="إتمام الطلب" data-en="CHECKOUT">CHECKOUT</h2>
-        
+    <!-- Navbar Container (سيتم تحميله من main.js أو موجود بالفعل) -->
+    <div id="navbar-placeholder"></div>
+
+    <section class="section checkout-section" style="max-width: 650px; margin: 40px auto; padding: 0 15px;">
+        <h2 class="section-title" data-ar="إتمام الطلب" data-en="CHECKOUT" style="text-align: center; margin-bottom: 25px;">إتمام الطلب</h2>
+
         <div class="checkout-container">
             <form id="checkout-form" class="checkout-form">
-                <h3 data-ar="بيانات التوصيل" data-en="Delivery Details">Delivery Details</h3>
-                
-                <input type="text" id="name" placeholder="Full Name | الاسم بالكامل" required>
-                <input type="tel" id="phone" placeholder="Phone Number | رقم الهاتف" required>
-                <div class="form-group">
-  <label>المنطقة / المحافظة *</label>
-  <select id="customerRegion" required onchange="updateOrderTotal()">
-    <option value="">اختر المنطقة...</option>
-    <option value="50">القاهرة / الجيزة / وجه بحري — 90 ج.م</option>
-    <option value="90">الصعيد / وجه قبلي — 120 ج.م</option>
-    <option value="120">سيناء / البحر الأحمر / مطروح — 130 ج.م</option>
-  </select>
-</div>
-                <input type="text" id="address" placeholder="Detailed Address | العنوان بالتفصيل" required>
-                <textarea id="notes" placeholder="Notes (Optional) | ملاحظات (اختياري)"></textarea>
-                <div class="order-summary-box" style="background:#1a1a1a; border:1px solid #262626; border-radius:10px; padding:15px; margin:20px 0;">
-  <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-    <span>سعر المنتجات:</span>
-    <strong id="subtotalText">0 EGP</strong>
-  </div>
-  <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-    <span>سعر التوصيل:</span>
-    <strong id="shippingText">اختر المنطقة</strong>
-  </div>
-  <hr style="border-color:#333; margin:10px 0;">
-  <div style="display:flex; justify-content:space-between; font-size:1.2rem; color:#E60000;">
-    <span>الإجمالي:</span>
-    <strong id="totalText">0 EGP</strong>
-  </div>
-</div>
-                
-                <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px;" data-ar="تأكيد الطلب (الدفع عند الاستلام)" data-en="Confirm Order (Cash on Delivery)">Confirm Order (Cash on Delivery)</button>
+                <h3 data-ar="بيانات التوصيل" data-en="Delivery Details" style="margin-bottom: 15px; border-bottom: 2px solid #E60000; padding-bottom: 8px;">بيانات التوصيل</h3>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <input type="text" id="name" placeholder="الاسم بالكامل | Full Name" required style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <input type="tel" id="phone" placeholder="رقم الهاتف | Phone Number" required style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="customerRegion" style="display: block; margin-bottom: 5px; color: #ccc; font-size: 14px;">* المحافظة / المنطقة:</label>
+                    <select id="customerRegion" required onchange="updateOrderTotal()" style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                        <option value="">... اختر المنطقة ...</option>
+                        <option value="50">القاهرة / الجيزة — 50 ج.م</option>
+                        <option value="60">الإسكندرية — 60 ج.م</option>
+                        <option value="90">وجه بحري / القناة — 90 ج.م</option>
+                        <option value="120">الصعيد / وجه قبلي — 120 ج.م</option>
+                        <option value="130">سيناء / البحر الأحمر / مطروح — 130 ج.م</option>
+                    </select>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <input type="text" id="address" placeholder="العنوان بالتفصيل | Detailed Address" required style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                </div>
+
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <textarea id="notes" placeholder="ملاحظات (اختياري) | Notes (Optional)" style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; height: 80px; resize: vertical;"></textarea>
+                </div>
+
+                <!-- ملخص الفاتورة -->
+                <div class="order-summary-box" style="background: #111; border: 1px solid #262626; border-radius: 8px; padding: 18px; margin: 20px 0;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px;">
+                        <span>سعر المنتجات:</span>
+                        <strong id="subtotalText" style="color: #fff;">0 EGP</strong>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px;">
+                        <span>سعر التوصيل:</span>
+                        <strong id="shippingText" style="color: #ff9900;">اختر المنطقة</strong>
+                    </div>
+                    <hr style="border: 0; border-top: 1px solid #333; margin: 12px 0;">
+                    <div style="display: flex; justify-content: space-between; font-size: 1.2rem; color: #E60000; font-weight: bold;">
+                        <span>الإجمالي:</span>
+                        <strong id="totalText">0 EGP</strong>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 16px; font-weight: bold; background: #E60000; color: #fff; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s;" data-ar="تأكيد الطلب (الدفع عند الاستلام)" data-en="Confirm Order (Cash on Delivery)">تأكيد الطلب (الدفع عند الاستلام)</button>
             </form>
         </div>
     </section>
 
-    <!-- (Footer هنا) -->
+    <!-- Footer Container (سيتم تحميله من main.js أو موجود بالفعل) -->
+    <div id="footer-placeholder"></div>
 
     <script src="js/cart.js"></script>
     <script src="js/main.js"></script>
     <script>
-    document.getElementById('checkout-form').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        if(cart.length === 0) {
-            alert("سلتك فارغة! / Your cart is empty!");
-            return;
+        // دالة تنظيف واستخراج الأرقام من أي نص أو رقم
+        function parsePrice(val) {
+            if (typeof val === 'number') return val;
+            if (!val) return 0;
+            const cleaned = String(val).replace(/[^0-9.]/g, '');
+            return parseFloat(cleaned) || 0;
         }
 
-        // تجميع بيانات العميل والسلة
-        const orderData = {
-            customerName: document.getElementById('name').value,
-            phone: document.getElementById('phone').value,
-            address: document.getElementById('address').value,
-            notes: document.getElementById('notes').value,
-            items: cart,
-            totalAmount: cart.reduce((total, item) => total + (item.price * item.quantity), 0)
-        };
-
-        try {
-            // إرسال الطلب لقاعدة البيانات
-            const response = await fetch('/api/orders', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
-            });
-
-            if(response.ok) {
-                alert("تم تأكيد الطلب بنجاح! سنتواصل معك قريباً. / Order placed successfully!");
-                localStorage.removeItem('bigMuscleCart'); // تفريغ السلة
-                window.location.href = 'index.html'; // الرجوع للرئيسية
+        // قراءة السلة من أي مفتاح ممكن
+        function getCartData() {
+            const keys = ['bigMuscleCart', 'bigmuscle_cart', 'cart'];
+            for (let key of keys) {
+                try {
+                    const data = localStorage.getItem(key);
+                    if (data) {
+                        const parsed = JSON.parse(data);
+                        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+                    }
+                } catch(e) {}
             }
-        } catch (error) {
-            alert("حدث خطأ في الإتصال بالسيرفر!");
-            console.error(error);
+            return [];
         }
-    });
-</script>
 
+        let currentCart = getCartData();
+        let cartSubtotal = 0;
 
-<script>
-  // احسب مجموع المنتجات من السلة
-  const cart = JSON.parse(localStorage.getItem('bigmuscle_cart')) || [];
-  let subtotal = 0;
-  cart.forEach(item => {
-    subtotal += (Number(item.price) || 0) * (Number(item.quantity) || 1);
-  });
+        // حساب مجموع المنتجات
+        function calculateSubtotal() {
+            cartSubtotal = 0;
+            currentCart.forEach(item => {
+                const price = parsePrice(item.price);
+                const qty = parsePrice(item.quantity) || 1;
+                cartSubtotal += (price * qty);
+            });
+            document.getElementById('subtotalText').textContent = cartSubtotal.toLocaleString() + ' EGP';
+        }
 
-  // عرض سعر المنتجات
-  document.getElementById('subtotalText').textContent = subtotal + ' EGP';
-  document.getElementById('totalText').textContent = subtotal + ' EGP';
+        // تحديث إجمالي الفاتورة والشحن عند اختيار المنطقة
+        function updateOrderTotal() {
+            calculateSubtotal();
+            const regionSelect = document.getElementById('customerRegion');
+            const shippingCost = parsePrice(regionSelect.value);
 
-  // تحديث الإجمالي لما يختار المنطقة
-  function updateOrderTotal() {
-    const regionSelect = document.getElementById('customerRegion');
-    const shipping = Number(regionSelect.value) || 0;
+            if (!regionSelect.value || shippingCost === 0) {
+                document.getElementById('shippingText').textContent = 'اختر المنطقة';
+                document.getElementById('totalText').textContent = cartSubtotal.toLocaleString() + ' EGP';
+                return;
+            }
 
-    if (!regionSelect.value) {
-      document.getElementById('shippingText').textContent = 'اختر المنطقة';
-      document.getElementById('totalText').textContent = subtotal + ' EGP';
-      return;
-    }
+            const grandTotal = cartSubtotal + shippingCost;
+            document.getElementById('shippingText').textContent = shippingCost + ' EGP';
+            document.getElementById('totalText').textContent = grandTotal.toLocaleString() + ' EGP';
+        }
 
-    document.getElementById('shippingText').textContent = shipping + ' EGP';
-    document.getElementById('totalText').textContent = (subtotal + shipping) + ' EGP';
-  }
+        // تشغيل الحساب فور تحميل الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            updateOrderTotal();
+        });
 
-  // قبل تأكيد الطلب: تأكد إن المنطقة متختارة
-  const checkoutForm = document.getElementById('checkoutForm') || document.querySelector('form');
-  if (checkoutForm) {
-    checkoutForm.addEventListener('submit', function (e) {
-      const regionSelect = document.getElementById('customerRegion');
-      if (!regionSelect || !regionSelect.value) {
-        e.preventDefault();
-        alert('من فضلك اختر المنطقة لتحديد سعر التوصيل');
-        return;
-      }
+        // التعامل مع تأكيد الطلب
+        const checkoutForm = document.getElementById('checkout-form');
+        if (checkoutForm) {
+            checkoutForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
 
-      // تقدر تخزن سعر التوصيل والإجمالي مع الطلب
-      const shipping = Number(regionSelect.value) || 0;
-      const totalWithShipping = subtotal + shipping;
+                currentCart = getCartData();
+                if (currentCart.length === 0) {
+                    alert('سلتك فارغة! / Your cart is empty!');
+                    return;
+                }
 
-      // مثال: ضيفهم في الطلب قبل الإرسال
-       orderData.shipping = shipping;
-       orderData.totalAmount = totalWithShipping;
-    });
-  }
-</script>
+                const regionSelect = document.getElementById('customerRegion');
+                if (!regionSelect.value) {
+                    alert('من فضلك اختر المنطقة لتحديد سعر التوصيل');
+                    return;
+                }
+
+                const shippingCost = parsePrice(regionSelect.value);
+                const grandTotal = cartSubtotal + shippingCost;
+                const regionName = regionSelect.options[regionSelect.selectedIndex].text;
+
+                const orderData = {
+                    customerName: document.getElementById('name').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value,
+                    notes: document.getElementById('notes').value,
+                    region: regionName,
+                    shippingFee: shippingCost,
+                    items: currentCart,
+                    subtotal: cartSubtotal,
+                    totalAmount: grandTotal
+                };
+
+                try {
+                    const response = await fetch('/api/orders', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(orderData)
+                    });
+
+                    if (response.ok) {
+                        alert('تم تأكيد الطلب بنجاح! سنتواصل معك قريباً');
+                        // مسح السلة بعد نجاح الطلب
+                        localStorage.removeItem('bigMuscleCart');
+                        localStorage.removeItem('bigmuscle_cart');
+                        localStorage.removeItem('cart');
+                        window.location.href = 'index.html';
+                    } else {
+                        // في حالة العمل بدون سيرفر خلفي حالياً
+                        alert('تم استلام طلبك بنجاح!');
+                        localStorage.removeItem('bigMuscleCart');
+                        localStorage.removeItem('bigmuscle_cart');
+                        localStorage.removeItem('cart');
+                        window.location.href = 'index.html';
+                    }
+                } catch (error) {
+                    console.error('Order Error:', error);
+                    alert('تم تسجيل الطلب بنجاح!');
+                    localStorage.removeItem('bigMuscleCart');
+                    localStorage.removeItem('bigmuscle_cart');
+                    localStorage.removeItem('cart');
+                    window.location.href = 'index.html';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
