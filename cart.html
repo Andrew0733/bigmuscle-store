@@ -2,26 +2,61 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart | Big Muscle</title>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/navbar.css">
     <link rel="stylesheet" href="css/footer.css">
-    <link rel="stylesheet" href="css/cart.css"> <!-- ملف تصميم السلة الجديد -->
+    <link rel="stylesheet" href="css/cart.css">
+
+    <style>
+        /* تحسين استجابة الموبايل لصفحة السلة بدون تأكيد على أي صفحات أخرى */
+        @media (max-width: 768px) {
+            .cart-section {
+                padding: 15px 10px !important;
+            }
+            .cart-container {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 20px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .cart-items, .cart-summary {
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+            .cart-item {
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding: 12px !important;
+                font-size: 15px !important;
+            }
+            .checkout-btn {
+                width: 100% !important;
+                padding: 14px !important;
+                font-size: 16px !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- (انسخ الـ Navbar بالكامل من index.html هنا) -->
+
+    <!-- Navbar Container -->
+    <div id="navbar-placeholder"></div>
 
     <!-- Cart Section -->
     <section class="section cart-section">
         <h2 class="section-title" data-ar="سلة المشتريات" data-en="SHOPPING CART">SHOPPING CART</h2>
-        
+
         <div class="cart-container">
             <div id="cart-items" class="cart-items">
-                <!-- المنتجات هتظهر هنا بالـ JavaScript -->
+                <!-- المنتجات ستظهر هنا بالـ JavaScript -->
             </div>
-            
+
             <div class="cart-summary">
                 <h3 data-ar="ملخص الطلب" data-en="Order Summary">Order Summary</h3>
                 <div class="summary-line">
@@ -29,76 +64,80 @@
                     <span id="cart-total">0 EGP</span>
                 </div>
                 <p class="cod-note" data-ar="الدفع عند الاستلام فقط" data-en="Cash on Delivery Only">Cash on Delivery Only</p>
-               <button onclick="goToCheckout()" class="btn btn-primary checkout-btn" data-ar="إتمام الطلب" data-en="Proceed to Checkout">Proceed to Checkout</button>
+                <button onclick="goToCheckout()" class="btn btn-primary checkout-btn" data-ar="إتمام الطلب" data-en="Proceed to Checkout">Proceed to Checkout</button>
             </div>
         </div>
     </section>
 
-    <!-- (انسخ الـ Footer بالكامل من index.html هنا) -->
+    <!-- Footer Container -->
+    <div id="footer-placeholder"></div>
 
     <script src="js/cart.js"></script>
     <script src="js/main.js"></script>
     <script>
-    // كود لعرض المنتجات داخل صفحة السلة
-    function renderCart() {
-        const cartItemsContainer = document.getElementById('cart-items');
-        const cartTotalElement = document.getElementById('cart-total');
-        let total = 0;
+        // كود عرض المنتجات داخل صفحة السلة
+        function renderCart() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartTotalElement = document.getElementById('cart-total');
+            let total = 0;
 
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = `<p style="font-size: 1.2rem; color: #888;" data-ar="السلة فارغة حالياً" data-en="Your cart is empty">Your cart is empty.</p>`;
-            cartTotalElement.textContent = `0 EGP`;
-            return;
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = `<p style="font-size: 1.2rem; color: #888;" data-ar="السلة فارغة حالياً" data-en="Your cart is empty">Your cart is empty.</p>`;
+                cartTotalElement.textContent = '0 EGP';
+                return;
+            }
+
+            cartItemsContainer.innerHTML = cart.map((item, index) => {
+                const itemPrice = parseFloat(String(item.price).replace(/[^0-9.]/g, '')) || 0;
+                const itemQty = parseInt(item.quantity) || 1;
+                total += itemPrice * itemQty;
+
+                return `
+                    <div class="cart-item">
+                        <div class="item-info">
+                            <h4>${item.name}</h4>
+                            <p>${itemPrice} EGP</p>
+                        </div>
+                        <div class="item-actions">
+                            <button onclick="changeQty(${index}, -1)">-</button>
+                            <span>${itemQty}</span>
+                            <button onclick="changeQty(${index}, 1)">+</button>
+                            <button class="remove-btn" onclick="removeItem(${index})"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            cartTotalElement.textContent = `${total} EGP`;
         }
 
-        cartItemsContainer.innerHTML = cart.map((item, index) => {
-            total += item.price * item.quantity;
-            return `
-            <div class="cart-item">
-                <div class="item-info">
-                    <h4>${item.name}</h4>
-                    <p>${item.price} EGP</p>
-                </div>
-                <div class="item-actions">
-                    <button onclick="changeQty(${index}, -1)">-</button>
-                    <span>${item.quantity}</span>
-                    <button onclick="changeQty(${index}, 1)">+</button>
-                    <button class="remove-btn" onclick="removeItem(${index})"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>
-            `;
-        }).join('');
-        
-        cartTotalElement.textContent = `${total} EGP`;
-    }
+        function changeQty(index, change) {
+            if (cart[index].quantity + change > 0) {
+                cart[index].quantity += change;
+                saveCart();
+                renderCart();
+                updateCartIcon();
+            }
+        }
 
-    function changeQty(index, change) {
-        if(cart[index].quantity + change > 0) {
-            cart[index].quantity += change;
+        function removeItem(index) {
+            cart.splice(index, 1);
             saveCart();
             renderCart();
             updateCartIcon();
         }
-    }
 
-    function removeItem(index) {
-        cart.splice(index, 1);
-        saveCart();
-        renderCart();
-        updateCartIcon();
-    }
-
-    // دالة التحقق قبل الذهاب لصفحة الدفع
-    function goToCheckout() {
-        if (cart.length === 0) {
-            const isAr = document.body.classList.contains('rtl');
-            alert(isAr ? 'السلة فارغة! يرجى إضافة منتجات أولاً قبل إتمام الطلب.' : 'Your cart is empty! Please add products first before checkout.');
-        } else {
-            window.location.href = 'checkout.html';
+        // دالة التحقق قبل الذهاب لصفحة الدفع
+        function goToCheckout() {
+            if (cart.length === 0) {
+                const isAr = document.body.classList.contains('rtl');
+                alert(isAr ? 'السلة فارغة! يرجى إضافة منتجات أولاً قبل إتمام الطلب.' : 'Your cart is empty! Please add products first before checkout.');
+            } else {
+                window.location.href = 'checkout.html';
+            }
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', renderCart);
-</script>
+        document.addEventListener('DOMContentLoaded', renderCart);
+    </script>
 </body>
 </html>
