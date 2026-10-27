@@ -1537,3 +1537,28 @@ body.rtl .modal-close-btn {
   }
 }
 
+
+
+/* منع تمدد شريط البحث وثبات العناصر على الموبايل */
+@media (max-width: 768px) {
+    .search-form {
+        flex: 1 1 auto !important;
+        max-width: 140px !important; /* حجم ثابت ومناسب للموبايل */
+        transition: none !important;
+    }
+
+    .search-form:focus-within,
+    .search-input:focus {
+        width: 100% !important;
+        max-width: 140px !important; /* يمنع التمدد عند الضغط */
+        box-shadow: none !important;
+    }
+
+    .search-input {
+        font-size: 16px !important; /* يمنع متصفح الموبايل من عمل Auto-Zoom */
+    }
+
+    .nav-actions {
+        flex-shrink: 0 !important; /* يمنع نزول أيقونة السلة واللغة لسطر جديد */
+    }
+}
