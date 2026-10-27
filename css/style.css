@@ -1563,34 +1563,3 @@ body.rtl .modal-close-btn {
     }
 }
 
-
-
-/* إظهار وتنسيق قائمة الـ Hamburger على الموبايل */
-@media (max-width: 768px) {
-    .hamburger, 
-    #hamburgerBtn, 
-    .hamburger-btn {
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
-        width: 25px !important;
-        height: 18px !important;
-        background: transparent !important;
-        border: none !important;
-        cursor: pointer !important;
-        padding: 0 !important;
-        margin-left: 8px !important;
-        z-index: 1001 !important;
-    }
-
-    .hamburger span, 
-    #hamburgerBtn span, 
-    .hamburger-btn span {
-        display: block !important;
-        width: 100% !important;
-        height: 3px !important;
-        background-color: #ffffff !important; /* لون الشرائط أبيض */
-        border-radius: 3px !important;
-        transition: all 0.3s ease !important;
-    }
-}
