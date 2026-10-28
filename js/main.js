@@ -114,3 +114,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 });
+
+
+// ==========================================
+// جلب شريط العروض الديناميكي لعرضه للزوار
+// ==========================================
+async function loadDynamicAnnouncement() {
+    try {
+        const response = await fetch('/api/announcement');
+        if (!response.ok) return;
+        
+        const data = await response.json();
+        const topBarTextP = document.querySelector('.top-bar-text p');
+
+        if (topBarTextP && data) {
+            // تحديث السمات للترجمة التلقائية
+            if (data.textAr) topBarTextP.setAttribute('data-ar', data.textAr);
+            if (data.textEn) topBarTextP.setAttribute('data-en', data.textEn);
+
+            // تحديد اللغة الحالية وعرض النص المناسب فوراً
+            const isArabic = document.body.classList.contains('rtl') || document.documentElement.lang === 'ar';
+            topBarTextP.textContent = isArabic ? (data.textAr || data.textEn) : (data.textEn || data.textAr);
+        }
+    } catch (error) {
+        console.log('سيتم استخدام النص الافتراضي لشريط العروض:', error);
+    }
+}
+
+// تشغيل جلب العرض فور تحميل الصفحة
+document.addEventListener('DOMContentLoaded', loadDynamicAnnouncement);

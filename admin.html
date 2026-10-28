@@ -140,6 +140,37 @@
     </table>
   </div>
 
+<!-- ==================== قسم التحكم في شريط العروض (Top Bar) ==================== -->
+<div class="admin-section" style="background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 20px; margin: 25px 0; max-width: 700px;">
+    <h3 style="color: #E60000; margin-top: 0; border-bottom: 2px solid #E60000; padding-bottom: 8px;">
+        📢 التحكم في شريط العروض (Top Bar)
+    </h3>
+    <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">
+        النص اللي هيظهر في الشريط الأحمر/الأسود فوق الموقع (يدعم العربي والإنجليزي)
+    </p>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; color: #ddd; margin-bottom: 5px;">النص بالعربي:</label>
+        <input type="text" id="announcementAr" placeholder="مثال: خصم 20% على جميع منتجات البروتين هذا الأسبوع!" 
+               style="width: 100%; padding: 12px; font-size: 15px; background: #111; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box;">
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        <label style="display: block; color: #ddd; margin-bottom: 5px;">النص بالإنجليزي:</label>
+        <input type="text" id="announcementEn" placeholder="Example: 20% OFF ALL PROTEIN PRODUCTS THIS WEEK!" 
+               style="width: 100%; padding: 12px; font-size: 15px; background: #111; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box;">
+    </div>
+
+    <button onclick="saveAnnouncement()" 
+            style="background: #E60000; color: white; border: none; padding: 12px 25px; border-radius: 6px; font-size: 15px; font-weight: bold; cursor: pointer; width: 100%;">
+        💾 حفظ العرض
+    </button>
+
+    <p id="announcementMsg" style="margin-top: 12px; font-size: 14px; display: none;"></p>
+</div>
+
+
+
   <!-- Offers -->
   <div class="admin-section">
     <h2 id="offerFormTitle"><i class="fa-solid fa-fire"></i> إضافة عرض جديد</h2>
@@ -474,5 +505,67 @@
       }
     }
   </script>
+
+<script>
+// ==========================================
+// تحميل العرض الحالي عند فتح صفحة الأدمن
+// ==========================================
+async function loadAnnouncement() {
+    try {
+        const res = await fetch('/api/announcement');
+        if (!res.ok) return;
+        const data = await res.json();
+        
+        document.getElementById('announcementAr').value = data.textAr || '';
+        document.getElementById('announcementEn').value = data.textEn || '';
+    } catch (err) {
+        console.error('Error loading announcement:', err);
+    }
+}
+
+// ==========================================
+// حفظ العرض الجديد
+// ==========================================
+async function saveAnnouncement() {
+    const textAr = document.getElementById('announcementAr').value.trim();
+    const textEn = document.getElementById('announcementEn').value.trim();
+    const msg = document.getElementById('announcementMsg');
+
+    if (!textAr && !textEn) {
+        msg.style.display = 'block';
+        msg.style.color = '#ff4444';
+        msg.textContent = 'من فضلك اكتب نص العرض بالعربي أو الإنجليزي';
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/announcement', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ textAr, textEn })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+            msg.style.display = 'block';
+            msg.style.color = '#00cc66';
+            msg.textContent = '✅ تم حفظ العرض بنجاح! هيظهر فوراً على الموقع.';
+        } else {
+            throw new Error(result.message || 'فشل الحفظ');
+        }
+    } catch (err) {
+        msg.style.display = 'block';
+        msg.style.color = '#ff4444';
+        msg.textContent = '❌ حصل خطأ أثناء الحفظ. تأكد إن السيرفر شغال.';
+        console.error(err);
+    }
+}
+
+// تشغيل التحميل أول ما الصفحة تفتح
+document.addEventListener('DOMContentLoaded', loadAnnouncement);
+</script>
+
+
 </body>
 </html>

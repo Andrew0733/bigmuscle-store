@@ -105,6 +105,22 @@ const orderSchema = new mongoose.Schema({
 });
 const Order = mongoose.model('Order', orderSchema);
 
+// ==========================================
+// Schema الخاص بشريط العروض العلوي (Top Bar)
+// ==========================================
+const announcementSchema = new mongoose.Schema({
+    textAr: { 
+        type: String, 
+        default: "خصم 20% على جميع منتجات البروتين هذا الأسبوع!" 
+    },
+    textEn: { 
+        type: String, 
+        default: "20% OFF ALL PROTEIN PRODUCTS THIS WEEK!" 
+    }
+}, { timestamps: true });
+
+const Announcement = mongoose.model('Announcement', announcementSchema);
+
 // 4. API Endpoints
 
 app.get('/', (req, res) => {
@@ -183,6 +199,8 @@ app.post('/api/products', upload.array('images', 5), async (req, res) => {
     }
 });
 
+
+
 app.put('/api/products/:id', upload.array('images', 5), async (req, res) => {
     try {
         const updateData = {
@@ -241,6 +259,46 @@ app.post('/api/offers', upload.single('image'), async (req, res) => {
         res.status(201).json(newOffer);
     } catch (err) {
         res.status(400).json({ error: err.message });
+    }
+});
+
+// ==========================================
+// API جلب شريط العروض (للموقع للجمهور)
+// ==========================================
+app.get('/api/announcement', async (req, res) => {
+    try {
+        let announcement = await Announcement.findOne();
+        if (!announcement) {
+            announcement = await Announcement.create({
+                textAr: "خصم 20% على جميع منتجات البروتين هذا الأسبوع!",
+                textEn: "20% OFF ALL PROTEIN PRODUCTS THIS WEEK!"
+            });
+        }
+        res.json(announcement);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching announcement", error });
+    }
+});
+
+// ==========================================
+// API تحديث شريط العروض (من لوحة التحكم)
+// ==========================================
+app.post('/api/announcement', async (req, res) => {
+    try {
+        const { textAr, textEn } = req.body;
+        let announcement = await Announcement.findOne();
+
+        if (announcement) {
+            announcement.textAr = textAr || announcement.textAr;
+            announcement.textEn = textEn || announcement.textEn;
+            await announcement.save();
+        } else {
+            announcement = await Announcement.create({ textAr, textEn });
+        }
+
+        res.json({ message: "تم تحديث الشريط بنجاح!", announcement });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating announcement", error });
     }
 });
 

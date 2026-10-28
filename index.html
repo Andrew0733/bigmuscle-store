@@ -25,15 +25,28 @@
     <link rel="icon" href="images/logo.png" type="image/png" />
   </head>
   <body>
-    <!-- Top Bar 
-    <div class="top-bar">
-      <p
-        data-ar="خصم 20% على جميع منتجات البروتين هذا الأسبوع!"
-        data-en="20% OFF ALL PROTEIN PRODUCTS THIS WEEK!"
-      >
-        20% OFF ALL PROTEIN PRODUCTS THIS WEEK!
-      </p>
-    </div> -->
+    
+    <!-- Top Bar -->
+<div class="top-bar">
+    <!-- روابط السوشيال ميديا على الشمال -->
+    <div class="top-bar-socials">
+        <a href="https://www.instagram.com/bigmuscle.eg" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.tiktok.com/@bigmuscle215" target="_blank" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+    </div>
+
+    <!-- نص العرض في المنتصف -->
+    <div class="top-bar-text">
+        <p data-ar="!خصم 20% على جميع منتجات البروتين هذا الأسبوع" data-en="20% OFF ALL PROTEIN PRODUCTS THIS WEEK!">
+            20% OFF ALL PROTEIN PRODUCTS THIS WEEK!
+        </p>
+    </div>
+
+    <!-- زرار اللغة على اليمين -->
+    <div class="top-bar-lang">
+        <!-- ربط الزرار بالدالة الموجودة مسبقاً في main.js -->
+        <button id="lang-toggle" class="lang-btn" onclick="toggleLanguage()">عربي</button>
+    </div>
+</div>
 
     <!-- Navbar -->
     <nav class="navbar">
@@ -90,7 +103,7 @@
         <button id="searchBtn"><i class="fas fa-search"></i></button>
     </div>
 
-          <!-- أيقونات السوشيال ميديا في الناف بار -->
+          <!-- أيقونات السوشيال ميديا في الناف بار 
           <div class="nav-socials">
             <a
               href="https://www.instagram.com/bigmuscle.eg?stkn=MWN1bXh5eDk0MGZ1eQ%3D%3D&utm_source=qr"
@@ -106,7 +119,7 @@
             ></a>
           </div>
 
-          <button id="lang-toggle" class="lang-btn">عربي</button>
+          <button id="lang-toggle" class="lang-btn">عربي</button>  -->
           <a href="cart.html" target="_blank" class="cart-icon">
             <i class="fas fa-shopping-cart"></i>
             <span class="cart-count">0</span>
