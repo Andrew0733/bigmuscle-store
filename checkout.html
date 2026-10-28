@@ -90,8 +90,11 @@
 
     <script src="js/cart.js"></script>
     <script src="js/main.js"></script>
+        <script src="js/cart.js"></script>
+    <script src="js/main.js"></script>
     <script>
         let offerRules = { freeShippingOver: 0, discountCategory: '', discountPercent: 0 };
+        let allProductsCatalog = []; // جلب الكتالوج الكامل لربط التصنيفات
 
         function parsePrice(val) {
             if (typeof val === 'number') return val;
@@ -118,20 +121,24 @@
         let cartSubtotal = 0;
         let calculatedDiscount = 0;
 
-        // جلب قواعد العرض من السيرفر
-        async function fetchOfferRules() {
+        // جلب قواعد العروض والمنتجات معاً لضمان قراءة التصنيفات الصحيحة
+        async function fetchOfferRulesAndProducts() {
             try {
-                const res = await fetch('/api/announcement');
-                if (res.ok) {
-                    offerRules = await res.json();
-                }
+                const [annRes, prodRes] = await Promise.all([
+                    fetch('/api/announcement'),
+                    fetch('/api/products')
+                ]);
+
+                if (annRes.ok) offerRules = await annRes.json();
+                if (prodRes.ok) allProductsCatalog = await prodRes.json();
+
             } catch (e) {
-                console.log('Error fetching offer rules:', e);
+                console.log('Error fetching data:', e);
             }
             updateOrderTotal();
         }
 
-        // حساب مجموع المنتجات والخصومات
+        // حساب المجموع والخصومات الذكية بناءً على تصنيف المنتج من قاعدة البيانات
         function calculateTotals() {
             cartSubtotal = 0;
             calculatedDiscount = 0;
@@ -145,10 +152,17 @@
                 const itemTotal = price * qty;
                 cartSubtotal += itemTotal;
 
-                // حساب الخصومات إذا كانت منطبقة على الفئة أو عامة
+                // مطابقة الخصم بحرفية مع تصنيف المنتج الأصلي في قاعدة البيانات
                 if (discountPct > 0) {
-                    const itemCat = (item.category || item.name || '').toLowerCase();
-                    if (!targetCat || itemCat.includes(targetCat)) {
+                    // البحث عن المنتج الأصلي من قاعدة البيانات لمعرفة تصنيفه بدقة
+                    const dbProd = allProductsCatalog.find(p => String(p._id || p.id) === String(item.id));
+                    const catName = dbProd ? (dbProd.category || '') : (item.category || '');
+                    const prodName = dbProd ? (dbProd.name || '') : (item.name || '');
+
+                    const fullText = (catName + ' ' + prodName).toLowerCase();
+
+                    // تطبيق الخصم إذا كانت الخانة فارغة أو تطابقت الفئة
+                    if (!targetCat || fullText.includes(targetCat)) {
                         calculatedDiscount += itemTotal * (discountPct / 100);
                     }
                 }
@@ -187,7 +201,6 @@
             let finalShippingCost = baseShippingCost;
             const freeThreshold = offerRules.freeShippingOver || 0;
 
-            // التحقق من شرط الشحن المجاني التلقائي
             if (freeThreshold > 0 && cartSubtotal >= freeThreshold) {
                 finalShippingCost = 0;
                 document.getElementById('shippingText').textContent = '0 EGP (🎉 شحن مجاني)';
@@ -201,7 +214,7 @@
             document.getElementById('totalText').textContent = grandTotal.toLocaleString() + ' EGP';
         }
 
-        document.addEventListener('DOMContentLoaded', fetchOfferRules);
+        document.addEventListener('DOMContentLoaded', fetchOfferRulesAndProducts);
 
         // إرسال الطلب
         const checkoutForm = document.getElementById('checkout-form');
