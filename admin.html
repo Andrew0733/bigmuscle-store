@@ -199,6 +199,73 @@
     <p id="announcementMsg" style="margin-top: 12px; font-size: 14px; display: none; font-weight: bold;"></p>
 </div>
 
+<!-- ==================== قسم إدارة أكواد الخصم (Promo Codes) ==================== -->
+<div class="admin-section" style="background: #1a1a1a; border: 1px solid #333; border-radius: 10px; padding: 22px; margin: 25px 0; max-width: 750px;">
+    <h3 style="color: #E60000; margin-top: 0; border-bottom: 2px solid #E60000; padding-bottom: 8px;">
+        🎟️ إنشاء وإدارة أكواد الخصم (Promo Codes)
+    </h3>
+    <p style="color: #aaa; font-size: 13px; margin-bottom: 18px;">
+        يمكنك إنشاء كود خصم للعملاء (عند استخدام الكود، يتم تطبيقه بدلاً من العرض التلقائي).
+    </p>
+
+    <!-- نموذج إضافة كود جديد -->
+    <div style="background: #111; border: 1px solid #282828; border-radius: 8px; padding: 18px; margin-bottom: 20px;">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 12px;">
+            <!-- اسم الكود -->
+            <div style="flex: 1 1 200px;">
+                <label style="display: block; color: #ddd; font-size: 13px; margin-bottom: 5px; font-weight: bold;">* اسم كود الخصم:</label>
+                <input type="text" id="promoCodeInput" placeholder="مثال: BLACKFRIDAY" 
+                       style="width: 100%; padding: 10px; font-size: 14px; background: #1a1a1a; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box; text-transform: uppercase;">
+            </div>
+
+            <!-- نوع الخصم -->
+            <div style="flex: 1 1 180px;">
+                <label style="display: block; color: #ddd; font-size: 13px; margin-bottom: 5px; font-weight: bold;">نوع الخصم:</label>
+                <select id="promoTypeInput" style="width: 100%; padding: 10px; font-size: 14px; background: #1a1a1a; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box;">
+                    <option value="percentage">نسبة مئوية (%)</option>
+                    <option value="fixed">مبلغ ثابت (ج.م)</option>
+                    <option value="free_shipping">شحن مجاني فقط</option>
+                </select>
+            </div>
+
+            <!-- قيمة الخصم -->
+            <div style="flex: 1 1 130px;">
+                <label style="display: block; color: #ddd; font-size: 13px; margin-bottom: 5px; font-weight: bold;">القيمة:</label>
+                <input type="number" id="promoValueInput" placeholder="مثلاً: 20" min="0" 
+                       style="width: 100%; padding: 10px; font-size: 14px; background: #1a1a1a; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box;">
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px;">
+            <!-- الحد الأدنى للطلب -->
+            <div style="flex: 1 1 200px;">
+                <label style="display: block; color: #ccc; font-size: 13px; margin-bottom: 5px;">حد أدنى للطلب (اختياري):</label>
+                <input type="number" id="promoMinOrderInput" placeholder="مثلاً: 1000 ج.م" min="0" 
+                       style="width: 100%; padding: 10px; font-size: 14px; background: #1a1a1a; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box;">
+            </div>
+
+            <!-- تخصيص لفئة معينة -->
+            <div style="flex: 1 1 200px;">
+                <label style="display: block; color: #ccc; font-size: 13px; margin-bottom: 5px;">مخصص لفئة (اختياري):</label>
+                <input type="text" id="promoCategoryInput" placeholder="مثلاً: Creatine (اتركه فارغاً للكل)" 
+                       style="width: 100%; padding: 10px; font-size: 14px; background: #1a1a1a; border: 1px solid #444; color: #fff; border-radius: 6px; box-sizing: border-box;">
+            </div>
+        </div>
+
+        <button onclick="savePromoCode()" 
+                style="background: #E60000; color: white; border: none; padding: 11px; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; width: 100%;">
+            ➕ إضافة / تحديث كود الخصم
+        </button>
+
+        <p id="promoMsg" style="margin-top: 10px; font-size: 13.5px; display: none; font-weight: bold;"></p>
+    </div>
+
+    <!-- جدول عرض الأكواد المتاحة -->
+    <h4 style="color: #fff; margin: 15px 0 10px 0; font-size: 14px;">📋 الأكواد الحالية:</h4>
+    <div id="promoCodesList" style="max-height: 250px; overflow-y: auto;">
+        <p style="color: #777; font-size: 13px; text-align: center;">جاري تحميل الأكواد...</p>
+    </div>
+</div>
 
   <!-- Offers -->
   <div class="admin-section">
@@ -597,6 +664,118 @@ async function saveAnnouncement() {
 }
 
 document.addEventListener('DOMContentLoaded', loadAnnouncement);
+
+
+// ==========================================
+// 1. تحميل وعرض الأكواد الحالية في الجدول
+// ==========================================
+async function loadPromoCodes() {
+    const listContainer = document.getElementById('promoCodesList');
+    if (!listContainer) return;
+
+    try {
+        const res = await fetch('/api/promocodes');
+        if (!res.ok) throw new Error('Failed to fetch');
+        const codes = await res.json();
+
+        if (codes.length === 0) {
+            listContainer.innerHTML = '<p style="color: #777; font-size: 13px; text-align: center;">لا توجد أكواد خصم مضافة حالياً.</p>';
+            return;
+        }
+
+        listContainer.innerHTML = codes.map(c => `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #111; border: 1px solid #262626; border-radius: 6px; padding: 10px 14px; margin-bottom: 8px;">
+                <div>
+                    <strong style="color: #00cc66; font-size: 15px;">${c.code}</strong>
+                    <span style="color: #aaa; font-size: 12px; margin-right: 10px;">
+                        (${c.type === 'percentage' ? c.value + '%' : c.type === 'fixed' ? c.value + ' EGP' : 'شحن مجاني'})
+                    </span>
+                    ${c.minOrder > 0 ? `<small style="color: #ff9900; display: block; font-size: 11px;">* الحد الأدنى: ${c.minOrder} ج.م</small>` : ''}
+                    ${c.category ? `<small style="color: #0099ff; display: block; font-size: 11px;">* مخصص لـ: ${c.category}</small>` : ''}
+                </div>
+                <button onclick="deletePromoCode('${c._id}')" style="background: rgba(230,0,0,0.15); border: 1px solid #E60000; color: #ff4444; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                    🗑️ حذف
+                </button>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        console.error(err);
+        listContainer.innerHTML = '<p style="color: #ff4444; font-size: 13px;">حدث خطأ أثناء تحميل الأكواد.</p>';
+    }
+}
+
+// ==========================================
+// 2. إضافة أو تحديث كود خصم
+// ==========================================
+async function savePromoCode() {
+    const code = document.getElementById('promoCodeInput').value.trim();
+    const type = document.getElementById('promoTypeInput').value;
+    const value = parseFloat(document.getElementById('promoValueInput').value) || 0;
+    const minOrder = parseFloat(document.getElementById('promoMinOrderInput').value) || 0;
+    const category = document.getElementById('promoCategoryInput').value.trim();
+    const msg = document.getElementById('promoMsg');
+
+    if (!code) {
+        msg.style.display = 'block';
+        msg.style.color = '#ff4444';
+        msg.textContent = 'من فضلك اكتب اسم كود الخصم!';
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/promocodes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code, type, value, minOrder, category, isActive: true })
+        });
+
+        const result = await res.json();
+
+        if (res.ok) {
+            msg.style.display = 'block';
+            msg.style.color = '#00cc66';
+            msg.textContent = '✅ ' + result.message;
+            // مسح المدخلات
+            document.getElementById('promoCodeInput').value = '';
+            document.getElementById('promoValueInput').value = '';
+            document.getElementById('promoMinOrderInput').value = '';
+            document.getElementById('promoCategoryInput').value = '';
+            loadPromoCodes();
+        } else {
+            throw new Error(result.message || 'فشل الحفظ');
+        }
+    } catch (err) {
+        msg.style.display = 'block';
+        msg.style.color = '#ff4444';
+        msg.textContent = '❌ ' + err.message;
+    }
+}
+
+// ==========================================
+// 3. حذف كود خصم
+// ==========================================
+async function deletePromoCode(id) {
+    if (!confirm('هل أنت تأكد من رغبتك في حذف كود الخصم هذا؟')) return;
+
+    try {
+        const res = await fetch(`/api/promocodes/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+            loadPromoCodes();
+        } else {
+            alert('حدث خطأ أثناء الحذف');
+        }
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+// تشغيل جلب الأكواد عند التحميل
+document.addEventListener('DOMContentLoaded', loadPromoCodes);
+
+
+
+
 </script>
 
 

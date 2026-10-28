@@ -105,6 +105,43 @@ const orderSchema = new mongoose.Schema({
 });
 const Order = mongoose.model('Order', orderSchema);
 
+
+// ==========================================
+// Schema كود الخصم (Promo Code)
+// ==========================================
+const promoCodeSchema = new mongoose.Schema({
+    code: { 
+        type: String, 
+        required: true, 
+        unique: true, 
+        uppercase: true, 
+        trim: true 
+    },
+    type: { 
+        type: String, 
+        enum: ['percentage', 'fixed', 'free_shipping'], 
+        default: 'percentage' 
+    }, // percentage = نسبة | fixed = مبلغ ثابت | free_shipping = شحن مجاني
+    value: { 
+        type: Number, 
+        default: 0 
+    }, // النسبة المئوية أو المبلغ
+    minOrder: { 
+        type: Number, 
+        default: 0 
+    }, // الحد الأدنى للطلب بالجنيه
+    category: { 
+        type: String, 
+        default: '' 
+    }, // الفئة الخاضعة للخصم (اختياري)
+    isActive: { 
+        type: Boolean, 
+        default: true 
+    }
+}, { timestamps: true });
+
+const PromoCode = mongoose.models.PromoCode || mongoose.model('PromoCode', promoCodeSchema);
+
 // ==========================================
 // 1. Schema الشروط والقواعد التلقائية للعروض
 // ==========================================
@@ -391,6 +428,101 @@ app.delete('/api/offers/:id', async (req, res) => {
         res.json({ message: 'Offer deleted successfully' });
     } catch (err) {
         res.status(500).json({ error: err.message });
+    }
+});
+
+// ==========================================
+// 1. جلب كافة أكواد الخصم (لوحة الأدمن)
+// ==========================================
+app.get('/api/promocodes', async (req, res) => {
+    try {
+        const codes = await PromoCode.find().sort({ createdAt: -1 });
+        res.json(codes);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching promo codes", error });
+    }
+});
+
+// ==========================================
+// 2. إنشاء / تعديل كود خصم جديد (لوحة الأدمن)
+// ==========================================
+app.post('/api/promocodes', async (req, res) => {
+    try {
+        let { code, type, value, minOrder, category, isActive } = req.body;
+        if (!code) return res.status(400).json({ message: "يرجى كتابة اسم كود الخصم" });
+
+        code = code.trim().toUpperCase();
+
+        let existingCode = await PromoCode.findOne({ code });
+        if (existingCode) {
+            existingCode.type = type || existingCode.type;
+            existingCode.value = Number(value) || 0;
+            existingCode.minOrder = Number(minOrder) || 0;
+            existingCode.category = category !== undefined ? category.trim() : existingCode.category;
+            existingCode.isActive = isActive !== undefined ? isActive : existingCode.isActive;
+            await existingCode.save();
+            return res.json({ message: "تم تحديث كود الخصم بنجاح!", promoCode: existingCode });
+        }
+
+        const newPromo = await PromoCode.create({
+            code,
+            type,
+            value: Number(value) || 0,
+            minOrder: Number(minOrder) || 0,
+            category: category ? category.trim() : '',
+            isActive: isActive !== undefined ? isActive : true
+        });
+
+        res.json({ message: "تم إنشاء كود الخصم بنجاح!", promoCode: newPromo });
+    } catch (error) {
+        res.status(500).json({ message: "Error saving promo code", error });
+    }
+});
+
+// ==========================================
+// 3. حذف كود خصم (لوحة الأدمن)
+// ==========================================
+app.delete('/api/promocodes/:id', async (req, res) => {
+    try {
+        await PromoCode.findByIdAndDelete(req.params.id);
+        res.json({ message: "تم حذف كود الخصم بنجاح!" });
+    } catch (error) {
+        res.status(500).json({ message: "Error deleting promo code", error });
+    }
+});
+
+// ==========================================
+// 4. التحقق من صحة كود الخصم عند الشراء (Checkout)
+// ==========================================
+app.post('/api/promocodes/validate', async (req, res) => {
+    try {
+        const { code, subtotal } = req.body;
+        if (!code) return res.status(400).json({ valid: false, message: "من فضلك ادخل كود الخصم" });
+
+        const promo = await PromoCode.findOne({ code: code.trim().toUpperCase(), isActive: true });
+
+        if (!promo) {
+            return res.status(404).json({ valid: false, message: "كود الخصم غير صحيح أو غير مفعل" });
+        }
+
+        if (promo.minOrder > 0 && subtotal < promo.minOrder) {
+            return res.status(400).json({ 
+                valid: false, 
+                message: `هذا الكود يتطلب حداً أدنى للشراء بقيمة ${promo.minOrder} ج.م` 
+            });
+        }
+
+        res.json({
+            valid: true,
+            code: promo.code,
+            type: promo.type,
+            value: promo.value,
+            category: promo.category,
+            minOrder: promo.minOrder,
+            message: "تم تطبيق كود الخصم بنجاح!"
+        });
+    } catch (error) {
+        res.status(500).json({ valid: false, message: "خطأ في التحقق من الكود", error });
     }
 });
 
