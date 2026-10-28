@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <!-- Navbar Container (سيتم تحميله من main.js أو موجود بالفعل) -->
+    <!-- Navbar Container -->
     <div id="navbar-placeholder"></div>
 
     <section class="section checkout-section" style="max-width: 650px; margin: 40px auto; padding: 0 15px;">
@@ -20,39 +20,41 @@
                 <h3 data-ar="بيانات التوصيل" data-en="Delivery Details" style="margin-bottom: 15px; border-bottom: 2px solid #E60000; padding-bottom: 8px;">بيانات التوصيل</h3>
 
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <input type="text" id="name" placeholder="الاسم بالكامل | Full Name" required style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                    <input type="text" id="name" placeholder="الاسم بالكامل | Full Name" required style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; box-sizing: border-box;">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <input type="tel" id="phone" placeholder="رقم الهاتف | Phone Number" required style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                    <input type="tel" id="phone" placeholder="رقم الهاتف | Phone Number" required style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; box-sizing: border-box;">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 15px;">
                     <label for="customerRegion" style="display: block; margin-bottom: 5px; color: #ccc; font-size: 14px;">* المحافظة / المنطقة:</label>
-                    <select id="customerRegion" required onchange="updateOrderTotal()" style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                    <select id="customerRegion" required onchange="updateOrderTotal()" style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; box-sizing: border-box;">
                         <option value="">... اختر المنطقة ...</option>
-                        <option value="90">القاهرة / الجيزة / وجه بحري — 90 ج.م</option>
+                        <option value="50">القاهرة / الجيزة — 50 ج.م</option>
+                        <option value="60">الإسكندرية — 60 ج.م</option>
+                        <option value="90">وجه بحري / القناة — 90 ج.م</option>
                         <option value="120">الصعيد / وجه قبلي — 120 ج.م</option>
                         <option value="130">سيناء / البحر الأحمر / مطروح — 130 ج.م</option>
                     </select>
                 </div>
 
                 <div class="form-group" style="margin-bottom: 15px;">
-                    <input type="text" id="address" placeholder="العنوان بالتفصيل | Detailed Address" required style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px;">
+                    <input type="text" id="address" placeholder="العنوان بالتفصيل | Detailed Address" required style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; box-sizing: border-box;">
                 </div>
 
                 <div class="form-group" style="margin-bottom: 20px;">
-                    <textarea id="notes" placeholder="ملاحظات (اختياري) | Notes (Optional)" style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; height: 80px; resize: vertical;"></textarea>
+                    <textarea id="notes" placeholder="ملاحظات (اختياري) | Notes (Optional)" style="width: 100%; padding: 12px; font-size: 16px; background: #1a1a1a; border: 1px solid #333; color: #fff; border-radius: 6px; height: 80px; resize: vertical; box-sizing: border-box;"></textarea>
                 </div>
 
                 <!-- ملاحظة الشحن للكتل الزائدة -->
-<div class="shipping-weight-info" style="background: rgba(230, 0, 0, 0.08); border-right: 3px solid #E60000; padding: 12px 15px; margin: 15px 0 20px 0; border-radius: 6px;">
-    <p style="margin: 0; font-size: 13.5px; color: #dddddd; line-height: 1.5;" 
-       data-ar="💡 ملاحظة: المنتجات التي تزن أكثر من 2 كيلو يتم إضافة 8 جنيه على سعر التوصيل لكل كيلو زيادة." 
-       data-en="💡 Note: Products weighing more than 2 kg will incur an extra 8 EGP shipping fee per additional kg.">
-       💡 ملاحظة: المنتجات التي تزن أكثر من 2 كيلو يتم إضافة 8 جنيه على سعر التوصيل لكل كيلو زيادة.
-    </p>
-</div>
+                <div class="shipping-weight-info" style="background: rgba(230, 0, 0, 0.08); border-right: 3px solid #E60000; padding: 12px 15px; margin: 15px 0 20px 0; border-radius: 6px;">
+                    <p style="margin: 0; font-size: 13.5px; color: #dddddd; line-height: 1.5;" 
+                       data-ar="💡 ملاحظة: المنتجات التي تزن أكثر من 2 كيلو يتم إضافة 8 جنيه على سعر التوصيل لكل كيلو زيادة." 
+                       data-en="💡 Note: Products weighing more than 2 kg will incur an extra 8 EGP shipping fee per additional kg.">
+                       💡 ملاحظة: المنتجات التي تزن أكثر من 2 كيلو يتم إضافة 8 جنيه على سعر التوصيل لكل كيلو زيادة.
+                    </p>
+                </div>
 
                 <!-- ملخص الفاتورة -->
                 <div class="order-summary-box" style="background: #111; border: 1px solid #262626; border-radius: 8px; padding: 18px; margin: 20px 0;">
@@ -60,11 +62,20 @@
                         <span>سعر المنتجات:</span>
                         <strong id="subtotalText" style="color: #fff;">0 EGP</strong>
                     </div>
+
+                    <!-- سطر خصم العرض التلقائي (يظهر إذا وجد خصم) -->
+                    <div id="discountRow" style="display: none; justify-content: space-between; margin-bottom: 12px; font-size: 15px; color: #00cc66;">
+                        <span id="discountLabel">خصم العرض:</span>
+                        <strong id="discountText">-0 EGP</strong>
+                    </div>
+
                     <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 15px;">
                         <span>سعر التوصيل:</span>
                         <strong id="shippingText" style="color: #ff9900;">اختر المنطقة</strong>
                     </div>
+
                     <hr style="border: 0; border-top: 1px solid #333; margin: 12px 0;">
+                    
                     <div style="display: flex; justify-content: space-between; font-size: 1.2rem; color: #E60000; font-weight: bold;">
                         <span>الإجمالي:</span>
                         <strong id="totalText">0 EGP</strong>
@@ -76,13 +87,14 @@
         </div>
     </section>
 
-    <!-- Footer Container (سيتم تحميله من main.js أو موجود بالفعل) -->
+    <!-- Footer Container -->
     <div id="footer-placeholder"></div>
 
     <script src="js/cart.js"></script>
     <script src="js/main.js"></script>
     <script>
-        // دالة تنظيف واستخراج الأرقام من أي نص أو رقم
+        let offerRules = { freeShippingOver: 0, discountCategory: '', discountPercent: 0 };
+
         function parsePrice(val) {
             if (typeof val === 'number') return val;
             if (!val) return 0;
@@ -90,7 +102,6 @@
             return parseFloat(cleaned) || 0;
         }
 
-        // قراءة السلة من أي مفتاح ممكن
         function getCartData() {
             const keys = ['bigMuscleCart', 'bigmuscle_cart', 'cart'];
             for (let key of keys) {
@@ -107,41 +118,94 @@
 
         let currentCart = getCartData();
         let cartSubtotal = 0;
+        let calculatedDiscount = 0;
 
-        // حساب مجموع المنتجات
-        function calculateSubtotal() {
+        // جلب قواعد العرض من السيرفر
+        async function fetchOfferRules() {
+            try {
+                const res = await fetch('/api/announcement');
+                if (res.ok) {
+                    offerRules = await res.json();
+                }
+            } catch (e) {
+                console.log('Error fetching offer rules:', e);
+            }
+            updateOrderTotal();
+        }
+
+        // حساب مجموع المنتجات والخصومات
+        function calculateTotals() {
             cartSubtotal = 0;
+            calculatedDiscount = 0;
+
+            const targetCat = (offerRules.discountCategory || '').toLowerCase().trim();
+            const discountPct = offerRules.discountPercent || 0;
+
             currentCart.forEach(item => {
                 const price = parsePrice(item.price);
                 const qty = parsePrice(item.quantity) || 1;
-                cartSubtotal += (price * qty);
+                const itemTotal = price * qty;
+                cartSubtotal += itemTotal;
+
+                // حساب الخصومات إذا كانت منطبقة على الفئة أو عامة
+                if (discountPct > 0) {
+                    const itemCat = (item.category || item.name || '').toLowerCase();
+                    if (!targetCat || itemCat.includes(targetCat)) {
+                        calculatedDiscount += itemTotal * (discountPct / 100);
+                    }
+                }
             });
+
             document.getElementById('subtotalText').textContent = cartSubtotal.toLocaleString() + ' EGP';
+
+            // عرض سطر الخصم إن وجد
+            const discountRow = document.getElementById('discountRow');
+            if (calculatedDiscount > 0) {
+                discountRow.style.display = 'flex';
+                document.getElementById('discountLabel').textContent = targetCat 
+                    ? `خصم العرض (${discountPct}% على ${offerRules.discountCategory}):` 
+                    : `خصم العرض (${discountPct}%):`;
+                document.getElementById('discountText').textContent = '-' + Math.round(calculatedDiscount).toLocaleString() + ' EGP';
+            } else {
+                discountRow.style.display = 'none';
+            }
         }
 
-        // تحديث إجمالي الفاتورة والشحن عند اختيار المنطقة
+        // تحديث إجمالي الطلب والشحن المجاني التلقائي
         function updateOrderTotal() {
-            calculateSubtotal();
-            const regionSelect = document.getElementById('customerRegion');
-            const shippingCost = parsePrice(regionSelect.value);
+            calculateTotals();
 
-            if (!regionSelect.value || shippingCost === 0) {
+            const regionSelect = document.getElementById('customerRegion');
+            let baseShippingCost = parsePrice(regionSelect.value);
+
+            if (!regionSelect.value) {
                 document.getElementById('shippingText').textContent = 'اختر المنطقة';
-                document.getElementById('totalText').textContent = cartSubtotal.toLocaleString() + ' EGP';
+                document.getElementById('shippingText').style.color = '#ff9900';
+                const total = Math.max(0, cartSubtotal - calculatedDiscount);
+                document.getElementById('totalText').textContent = total.toLocaleString() + ' EGP';
                 return;
             }
 
-            const grandTotal = cartSubtotal + shippingCost;
-            document.getElementById('shippingText').textContent = shippingCost + ' EGP';
+            let finalShippingCost = baseShippingCost;
+            const freeThreshold = offerRules.freeShippingOver || 0;
+
+            // التحقق من شرط الشحن المجاني التلقائي
+            if (freeThreshold > 0 && cartSubtotal >= freeThreshold) {
+                finalShippingCost = 0;
+                document.getElementById('shippingText').textContent = '0 EGP (🎉 شحن مجاني)';
+                document.getElementById('shippingText').style.color = '#00cc66';
+            } else {
+                document.getElementById('shippingText').textContent = baseShippingCost + ' EGP';
+                document.getElementById('shippingText').style.color = '#ffffff';
+            }
+
+            const grandTotal = Math.max(0, cartSubtotal - calculatedDiscount + finalShippingCost);
             document.getElementById('totalText').textContent = grandTotal.toLocaleString() + ' EGP';
         }
 
-        // تشغيل الحساب فور تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', function() {
-            updateOrderTotal();
-        });
+        document.addEventListener('DOMContentLoaded', fetchOfferRules);
 
-        // التعامل مع تأكيد الطلب
+        // إرسال الطلب
         const checkoutForm = document.getElementById('checkout-form');
         if (checkoutForm) {
             checkoutForm.addEventListener('submit', async function(e) {
@@ -159,8 +223,14 @@
                     return;
                 }
 
-                const shippingCost = parsePrice(regionSelect.value);
-                const grandTotal = cartSubtotal + shippingCost;
+                let baseShippingCost = parsePrice(regionSelect.value);
+                let finalShippingCost = baseShippingCost;
+                const freeThreshold = offerRules.freeShippingOver || 0;
+                if (freeThreshold > 0 && cartSubtotal >= freeThreshold) {
+                    finalShippingCost = 0;
+                }
+
+                const grandTotal = Math.max(0, cartSubtotal - calculatedDiscount + finalShippingCost);
                 const regionName = regionSelect.options[regionSelect.selectedIndex].text;
 
                 const orderData = {
@@ -169,7 +239,8 @@
                     address: document.getElementById('address').value,
                     notes: document.getElementById('notes').value,
                     region: regionName,
-                    shippingFee: shippingCost,
+                    shippingFee: finalShippingCost,
+                    discountAmount: Math.round(calculatedDiscount),
                     items: currentCart,
                     subtotal: cartSubtotal,
                     totalAmount: grandTotal
@@ -182,21 +253,11 @@
                         body: JSON.stringify(orderData)
                     });
 
-                    if (response.ok) {
-                        alert('تم تأكيد الطلب بنجاح! سنتواصل معك قريباً');
-                        // مسح السلة بعد نجاح الطلب
-                        localStorage.removeItem('bigMuscleCart');
-                        localStorage.removeItem('bigmuscle_cart');
-                        localStorage.removeItem('cart');
-                        window.location.href = 'index.html';
-                    } else {
-                        // في حالة العمل بدون سيرفر خلفي حالياً
-                        alert('تم استلام طلبك بنجاح!');
-                        localStorage.removeItem('bigMuscleCart');
-                        localStorage.removeItem('bigmuscle_cart');
-                        localStorage.removeItem('cart');
-                        window.location.href = 'index.html';
-                    }
+                    alert('تم تأكيد الطلب بنجاح! سنتواصل معك قريباً');
+                    localStorage.removeItem('bigMuscleCart');
+                    localStorage.removeItem('bigmuscle_cart');
+                    localStorage.removeItem('cart');
+                    window.location.href = 'index.html';
                 } catch (error) {
                     console.error('Order Error:', error);
                     alert('تم تسجيل الطلب بنجاح!');

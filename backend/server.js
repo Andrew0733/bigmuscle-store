@@ -106,7 +106,7 @@ const orderSchema = new mongoose.Schema({
 const Order = mongoose.model('Order', orderSchema);
 
 // ==========================================
-// Schema الخاص بشريط العروض العلوي (Top Bar)
+// 1. Schema الشروط والقواعد التلقائية للعروض
 // ==========================================
 const announcementSchema = new mongoose.Schema({
     textAr: { 
@@ -116,10 +116,72 @@ const announcementSchema = new mongoose.Schema({
     textEn: { 
         type: String, 
         default: "20% OFF ALL PROTEIN PRODUCTS THIS WEEK!" 
+    },
+    freeShippingOver: { 
+        type: Number, 
+        default: 0 // 0 يعني غير مفعل | مثلاً 2500 تعني شحن مجاني للأوردرات فوق 2500
+    },
+    discountCategory: { 
+        type: String, 
+        default: "" // اسم الفئة الخاضعة للخصم مثل "Creatine" أو "Protein"
+    },
+    discountPercent: { 
+        type: Number, 
+        default: 0 // نسبة الخصم مثل 30 تعني 30%
     }
 }, { timestamps: true });
 
-const Announcement = mongoose.model('Announcement', announcementSchema);
+const Announcement = mongoose.models.Announcement || mongoose.model('Announcement', announcementSchema);
+
+// ==========================================
+// 2. API جلب العرض وقواعده التلقائية
+// ==========================================
+app.get('/api/announcement', async (req, res) => {
+    try {
+        let announcement = await Announcement.findOne();
+        if (!announcement) {
+            announcement = await Announcement.create({
+                textAr: "خصم 20% على جميع منتجات البروتين هذا الأسبوع!",
+                textEn: "20% OFF ALL PROTEIN PRODUCTS THIS WEEK!",
+                freeShippingOver: 0,
+                discountCategory: "",
+                discountPercent: 0
+            });
+        }
+        res.json(announcement);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching announcement", error });
+    }
+});
+
+// ==========================================
+// 3. API تحديث العرض وقواعده من الأدمن
+// ==========================================
+app.post('/api/announcement', async (req, res) => {
+    try {
+        const { textAr, textEn, freeShippingOver, discountCategory, discountPercent } = req.body;
+        let announcement = await Announcement.findOne();
+
+        const updateData = {
+            textAr: textAr !== undefined ? textAr : "خصم 20% على جميع منتجات البروتين هذا الأسبوع!",
+            textEn: textEn !== undefined ? textEn : "20% OFF ALL PROTEIN PRODUCTS THIS WEEK!",
+            freeShippingOver: Number(freeShippingOver) || 0,
+            discountCategory: discountCategory ? discountCategory.trim() : "",
+            discountPercent: Number(discountPercent) || 0
+        };
+
+        if (announcement) {
+            Object.assign(announcement, updateData);
+            await announcement.save();
+        } else {
+            announcement = await Announcement.create(updateData);
+        }
+
+        res.json({ message: "تم تحديث العرض والقواعد بنجاح!", announcement });
+    } catch (error) {
+        res.status(500).json({ message: "Error updating announcement", error });
+    }
+});
 
 // 4. API Endpoints
 
