@@ -1563,3 +1563,49 @@ body.rtl .modal-close-btn {
     }
 }
 
+/* ==========================================
+   إصلاح كروت المنتجات على الموبايل (منع تداخل الزرار مع السعر)
+========================================== */
+@media (max-width: 768px) {
+    .product-card {
+        height: auto !important;
+        overflow: visible !important;
+        display: flex !important;
+        flex-direction: column !important;
+    }
+
+    .product-info {
+        position: relative !important;
+        height: auto !important;
+        padding: 10px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+    }
+
+    /* إلغاء الـ Absolute عن السعر والزرار ليعود التدفق الطبيعي */
+    .product-price,
+    .product-card .price {
+        position: static !important;
+        display: block !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        margin: 5px 0 !important;
+        font-size: 14px !important;
+        color: #ffffff !important;
+        z-index: 2 !important;
+    }
+
+    .product-card .btn,
+    .product-card button,
+    .add-to-cart-btn {
+        position: static !important;
+        transform: none !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        width: 100% !important;
+        margin-top: 6px !important;
+        padding: 8px 5px !important;
+        font-size: 13px !important;
+    }
+}
