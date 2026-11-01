@@ -1667,3 +1667,80 @@ body.rtl .modal-close-btn {
     font-weight: bold;
     cursor: pointer;
 }
+
+
+/* ==========================================
+   تنسيق أزرار كروت ونافذة العروض (Offers Modals & Cards)
+========================================== */
+
+/* 1. زر View Deal في كروت العروض */
+.offer-card button,
+.offer-quick-btn {
+    background: #E60000 !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 10px 22px !important;
+    border-radius: 6px !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3) !important;
+    display: inline-block !important;
+}
+
+.offer-card button:hover,
+.offer-quick-btn:hover {
+    background: #b30000 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 15px rgba(230, 0, 0, 0.5) !important;
+}
+
+/* 2. أزرار النافذة المنبثقة (Modal Buttons) */
+.modal-content button,
+.modal-box button {
+    border-radius: 6px !important;
+    font-weight: bold !important;
+    padding: 10px 20px !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+}
+
+/* زر Add to Cart داخل النافذة */
+.modal-content button.btn-primary,
+.modal-content button[onclick*="addToCart"],
+.modal-content button[onclick*="Cart"] {
+    background: #E60000 !important;
+    color: #ffffff !important;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(230, 0, 0, 0.3) !important;
+}
+
+.modal-content button.btn-primary:hover {
+    background: #b30000 !important;
+    transform: translateY(-1px) !important;
+}
+
+/* زر Close داخل النافذة */
+.modal-content button.btn-secondary,
+.modal-content button[onclick*="close"],
+.modal-content button[onclick*="Close"] {
+    background: #222222 !important;
+    color: #cccccc !important;
+    border: 1px solid #444444 !important;
+}
+
+.modal-content button.btn-secondary:hover,
+.modal-content button[onclick*="close"]:hover {
+    background: #333333 !important;
+    color: #ffffff !important;
+    border-color: #666666 !important;
+}
+
+/* تغيير مؤشر الماوس لمكبر عند الوقوف على صور النوافذ المنبثقة */
+.modal-content img, 
+.modal-box img, 
+.modal-main-img-wrap img {
+    cursor: zoom-in !important;
+}

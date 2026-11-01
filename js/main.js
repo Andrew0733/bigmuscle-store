@@ -166,3 +166,38 @@ function openImageLightbox(src) {
     document.getElementById('lightboxImg').src = src;
     lightbox.style.display = 'flex';
 }
+
+// ==========================================
+// عارض الصور (Lightbox) وتكبير أي صورة داخل النوافذ (Modal)
+// ==========================================
+function openImageLightbox(src) {
+    if (!src) return;
+    let lightbox = document.getElementById('imageLightbox');
+
+    if (!lightbox) {
+        lightbox = document.createElement('div');
+        lightbox.id = 'imageLightbox';
+        lightbox.className = 'lightbox-overlay';
+        lightbox.innerHTML = `
+            <span class="lightbox-close" onclick="document.getElementById('imageLightbox').style.display='none'">&times;</span>
+            <img id="lightboxImg" src="" onclick="event.stopPropagation()">
+        `;
+        lightbox.onclick = function() { this.style.display = 'none'; };
+        document.body.appendChild(lightbox);
+    }
+
+    document.getElementById('lightboxImg').src = src;
+    lightbox.style.display = 'flex';
+}
+
+// الاستماع التلقائي: أي صورة يتم الضغط عليها داخل أي Modal تفتح في الـ Lightbox فوراً
+document.addEventListener('click', function(e) {
+    const img = e.target;
+    if (img && img.tagName === 'IMG') {
+        const isInsideModal = img.closest('.modal-content') || img.closest('.modal-box') || img.closest('.modal-main-img-wrap') || img.closest('.modal');
+        // التأكد من أنها ليست صورة داخل الـ Lightbox نفسه لعدم التكرار
+        if (isInsideModal && img.id !== 'lightboxImg') {
+            openImageLightbox(img.src);
+        }
+    }
+});
