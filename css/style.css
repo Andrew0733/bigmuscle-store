@@ -1723,7 +1723,7 @@ body.rtl .modal-close-btn {
 }
 
 /* زر Close داخل النافذة */
-.modal-content button.btn-secondary,
+/*.modal-content button.btn-secondary,
 .modal-content button[onclick*="close"],
 .modal-content button[onclick*="Close"] {
     background: #222222 !important;
@@ -1736,7 +1736,7 @@ body.rtl .modal-close-btn {
     background: #333333 !important;
     color: #ffffff !important;
     border-color: #666666 !important;
-}
+}*/
 
 
 /* ==========================================
