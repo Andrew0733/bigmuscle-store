@@ -1738,9 +1738,3 @@ body.rtl .modal-close-btn {
     border-color: #666666 !important;
 }
 
-/* تغيير مؤشر الماوس لمكبر عند الوقوف على صور النوافذ المنبثقة */
-.modal-content img, 
-.modal-box img, 
-.modal-main-img-wrap img {
-    cursor: zoom-in !important;
-}
