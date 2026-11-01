@@ -1609,3 +1609,27 @@ body.rtl .modal-close-btn {
         font-size: 13px !important;
     }
 }
+
+/* ==========================================
+   إظهار صورة العرض بالكامل داخل الـ Modal بدون قص
+========================================== */
+.modal-main-img-wrap,
+.modal-gallery-box,
+.modal-body .img-container {
+    height: auto !important;
+    max-height: 320px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #000000 !important;
+}
+
+.modal-main-img-wrap img,
+.modal-content-box img,
+#modalImage,
+.offer-modal-img {
+    max-height: 300px !important;
+    width: 100% !important;
+    object-fit: contain !important; /* يمنع قص الصورة تماماً وتظهر بالكامل */
+    border-radius: 8px !important;
+}
