@@ -1790,7 +1790,7 @@ button[onclick*="addToCart"]:hover {
 button[onclick*="close"],
 button[onclick*="Close"] {
     background: #222222 !important;
-    color: #ffffff !important;
+    color: #b30000 !important;
     border: 1px solid #444444 !important;
 }
 
