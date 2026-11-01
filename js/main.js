@@ -143,3 +143,26 @@ async function loadDynamicAnnouncement() {
 
 // تشغيل جلب العرض فور تحميل الصفحة
 document.addEventListener('DOMContentLoaded', loadDynamicAnnouncement);
+
+
+// دالة فتح الصورة بحجم الشاشة
+function openImageLightbox(src) {
+    let lightbox = document.getElementById('imageLightbox');
+    
+    // لو مش موجود، انشئه
+    if (!lightbox) {
+        lightbox = document.createElement('div');
+        lightbox.id = 'imageLightbox';
+        lightbox.className = 'lightbox-overlay';
+        lightbox.innerHTML = `
+            <span class="lightbox-close" onclick="this.parentElement.style.display='none'">&times;</span>
+            <img id="lightboxImg" src="" onclick="event.stopPropagation()">
+        `;
+        // إغلاق عند الضغط على المساحة السوداء
+        lightbox.onclick = function() { this.style.display = 'none'; };
+        document.body.appendChild(lightbox);
+    }
+
+    document.getElementById('lightboxImg').src = src;
+    lightbox.style.display = 'flex';
+}

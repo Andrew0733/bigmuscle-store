@@ -34,7 +34,7 @@ async function loadOffers() {
                      data-price="${offer.price || 0}"
                      data-image="${offer.image || ''}">
                     <div class="offer-img">
-                        <img src="${offer.image}" alt="${title}">
+                        <img src="${offer.image}" alt="${title}" onclick="openImageLightbox('${offer.image}'); event.stopPropagation();" style="cursor: zoom-in;">
                     </div>
                     <div class="offer-details">
                         <span class="offer-badge">${discount}</span>
